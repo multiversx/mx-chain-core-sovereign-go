@@ -329,5 +329,8 @@ const InitialVersionOfTransaction = uint32(1)
 // DefaultAddressPrefix is the default hrp of MultiversX/Elrond
 const DefaultAddressPrefix = "erd"
 
+// OneAddressPrefix is the default hrp of OneFinity
+const OneAddressPrefix = "one"
+
 // TopicRequestSuffix represents the topic name suffix for requests
 const TopicRequestSuffix = "_REQUEST"
