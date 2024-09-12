@@ -22,3 +22,6 @@ const MaskSignedWithHash = uint32(1)
 
 // MaskGuardedTransaction - this mask is used to verify if the flag for guarded transaction is set in the transaction option field
 const MaskGuardedTransaction = uint32(1) << 1
+
+// MaskETHTransactionFormat - this mask is used to verify if the flag for eth transaction format is set in the transaction option field
+const MaskETHTransactionFormat = uint32(1) << 2

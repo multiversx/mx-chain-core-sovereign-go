@@ -121,3 +121,6 @@ var ErrNilEnableEpochsHandler = errors.New("nil enable epochs handler")
 
 // ErrInvalidEnableEpochsHandler signals that an invalid enable epochs handler has been provided
 var ErrInvalidEnableEpochsHandler = errors.New("invalid enable epochs handler")
+
+// ErrInvalidAddressIdentifier signals that an invalid address identifier has been provided
+var ErrInvalidAddressIdentifier = errors.New("invalid address identifier")
