@@ -33,6 +33,4 @@ message Transaction {
   bytes                   RcvAliasAddr       = 16 [(gogoproto.jsontag) = "rcvAliasAddr,omitempty"];
   bytes                   SndAliasAddr       = 17 [(gogoproto.jsontag) = "sndAliasAddr,omitempty"];
   bytes                   OriginalData       = 18 [(gogoproto.jsontag) = "originalData,omitempty"];
-  bytes                   RelayerAddr        = 19 [(gogoproto.jsontag) = "relayer,omitempty"];
-	repeated Transaction    InnerTransactions  = 20 [(gogoproto.jsontag) = "innerTransactions,omitempty"];
 }

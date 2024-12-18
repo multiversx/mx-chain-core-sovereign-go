@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"math/big"
 
+	"github.com/multiversx/mx-chain-core-go/core"
 	"github.com/multiversx/mx-chain-core-go/core/check"
 	"github.com/multiversx/mx-chain-core-go/data"
 	"github.com/multiversx/mx-chain-core-go/data/headerVersionData"
@@ -631,16 +632,22 @@ func (sch *SovereignChainHeader) SetAccumulatedFeesInEpoch(value *big.Int) error
 	return nil
 }
 
-// GetEpochStartHandler returns epoch start header handler as for metachain, but without last finalized headers
+// GetEpochStartHandler returns epoch start header handler as for metachain, but with last finalized headers from main chain, if found.
 func (sch *SovereignChainHeader) GetEpochStartHandler() data.EpochStartHandler {
 	if sch == nil {
 		return nil
 	}
 
-	return &EpochStart{
-		LastFinalizedHeaders: make([]EpochStartShardData, 0),
-		Economics:            sch.EpochStart.Economics,
+	return &sch.EpochStart
+}
+
+// GetLastFinalizedCrossChainHeaderHandler returns the last finalized cross chain header data
+func (sch *SovereignChainHeader) GetLastFinalizedCrossChainHeaderHandler() data.EpochStartChainDataHandler {
+	if sch == nil {
+		return nil
 	}
+
+	return &sch.EpochStart.LastFinalizedCrossChainHeader
 }
 
 // GetShardInfoHandlers returns empty slice
@@ -704,4 +711,162 @@ func (omb *OutGoingMiniBlockHeader) SetAggregatedSignatureOutGoingOperations(sig
 // IsInterfaceNil checks if the underlying interface is nil
 func (omb *OutGoingMiniBlockHeader) IsInterfaceNil() bool {
 	return omb == nil
+}
+
+// SetShardID sets the epoch start shardID
+func (essd *EpochStartCrossChainData) SetShardID(shardID uint32) error {
+	if essd == nil {
+		return data.ErrNilPointerReceiver
+	}
+
+	essd.ShardID = shardID
+
+	return nil
+}
+
+// SetEpoch sets the epoch start epoch
+func (essd *EpochStartCrossChainData) SetEpoch(epoch uint32) error {
+	if essd == nil {
+		return data.ErrNilPointerReceiver
+	}
+
+	essd.Epoch = epoch
+
+	return nil
+}
+
+// SetRound sets the epoch start round
+func (essd *EpochStartCrossChainData) SetRound(round uint64) error {
+	if essd == nil {
+		return data.ErrNilPointerReceiver
+	}
+
+	essd.Round = round
+
+	return nil
+}
+
+// SetNonce sets the epoch start nonce
+func (essd *EpochStartCrossChainData) SetNonce(nonce uint64) error {
+	if essd == nil {
+		return data.ErrNilPointerReceiver
+	}
+
+	essd.Nonce = nonce
+
+	return nil
+}
+
+// SetHeaderHash sets the epoch start header hash
+func (essd *EpochStartCrossChainData) SetHeaderHash(hash []byte) error {
+	if essd == nil {
+		return data.ErrNilPointerReceiver
+	}
+
+	essd.HeaderHash = hash
+
+	return nil
+}
+
+// GetRootHash returns nothing
+func (essd *EpochStartCrossChainData) GetRootHash() []byte {
+	return nil
+}
+
+// GetFirstPendingMetaBlock returns nothing
+func (essd *EpochStartCrossChainData) GetFirstPendingMetaBlock() []byte {
+	return nil
+}
+
+// GetLastFinishedMetaBlock returns nothing
+func (essd *EpochStartCrossChainData) GetLastFinishedMetaBlock() []byte {
+	return nil
+}
+
+// GetPendingMiniBlockHeaderHandlers returns empty slice
+func (essd *EpochStartCrossChainData) GetPendingMiniBlockHeaderHandlers() []data.MiniBlockHeaderHandler {
+	return make([]data.MiniBlockHeaderHandler, 0)
+}
+
+// SetRootHash does nothing
+func (essd *EpochStartCrossChainData) SetRootHash([]byte) error {
+	return nil
+}
+
+// SetFirstPendingMetaBlock does nothing
+func (essd *EpochStartCrossChainData) SetFirstPendingMetaBlock([]byte) error {
+	return nil
+}
+
+// SetLastFinishedMetaBlock does nothing
+func (essd *EpochStartCrossChainData) SetLastFinishedMetaBlock([]byte) error {
+	return nil
+}
+
+// SetPendingMiniBlockHeaders does nothing
+func (essd *EpochStartCrossChainData) SetPendingMiniBlockHeaders(_ []data.MiniBlockHeaderHandler) error {
+	return nil
+}
+
+// GetLastFinalizedHeaderHandlers returns last cross main chain finalized header in a slice w.r.t to the interface
+func (m *EpochStartSovereign) GetLastFinalizedHeaderHandlers() []data.EpochStartShardDataHandler {
+	if m == nil {
+		return nil
+	}
+
+	epochStartShardData := make([]data.EpochStartShardDataHandler, 0)
+	if m.LastFinalizedCrossChainHeader.ShardID == core.MainChainShardId {
+		epochStartShardData = append(epochStartShardData, &m.LastFinalizedCrossChainHeader)
+	}
+
+	return epochStartShardData
+}
+
+// GetEconomicsHandler returns the economics
+func (m *EpochStartSovereign) GetEconomicsHandler() data.EconomicsHandler {
+	if m == nil {
+		return nil
+	}
+
+	return &m.Economics
+}
+
+// SetLastFinalizedHeaders sets epoch start data for main chain chain only
+func (m *EpochStartSovereign) SetLastFinalizedHeaders(epochStartShardDataHandlers []data.EpochStartShardDataHandler) error {
+	if m == nil {
+		return data.ErrNilPointerReceiver
+	}
+
+	for _, epochStartShardData := range epochStartShardDataHandlers {
+		if epochStartShardData.GetShardID() == core.MainChainShardId {
+			m.LastFinalizedCrossChainHeader = EpochStartCrossChainData{
+				ShardID:    epochStartShardData.GetShardID(),
+				Epoch:      epochStartShardData.GetEpoch(),
+				Round:      epochStartShardData.GetRound(),
+				Nonce:      epochStartShardData.GetNonce(),
+				HeaderHash: epochStartShardData.GetHeaderHash(),
+			}
+		}
+	}
+
+	return nil
+}
+
+// SetEconomics sets economics
+func (m *EpochStartSovereign) SetEconomics(economicsHandler data.EconomicsHandler) error {
+	if m == nil {
+		return data.ErrNilPointerReceiver
+	}
+
+	ec, ok := economicsHandler.(*Economics)
+	if !ok {
+		return data.ErrInvalidTypeAssertion
+	}
+	if ec == nil {
+		return data.ErrNilPointerDereference
+	}
+
+	m.Economics = *ec
+
+	return nil
 }

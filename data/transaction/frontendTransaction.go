@@ -20,6 +20,4 @@ type FrontendTransaction struct {
 	SenderAliasAddress   []byte                 `json:"senderAliasAddress,omitempty"`
 	ReceiverAliasAddress []byte                 `json:"receiverAliasAddress,omitempty"`
 	OriginalData         []byte                 `json:"originalData,omitempty"`
-	Relayer              string                 `json:"relayer,omitempty"`
-	InnerTransactions    []*FrontendTransaction `json:"innerTransactions,omitempty"`
 }
