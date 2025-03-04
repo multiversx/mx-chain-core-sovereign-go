@@ -857,7 +857,7 @@ func (m *EpochStartSovereign) SetLastFinalizedHeaders(epochStartShardDataHandler
 	for _, epochStartShardData := range epochStartShardDataHandlers {
 		if epochStartShardData.GetShardID() == core.MainChainShardId {
 			m.LastFinalizedCrossChainHeader = EpochStartCrossChainData{
-				ShardID:    core.SovereignChainShardId,
+				ShardID:    core.MainChainShardId,
 				Epoch:      epochStartShardData.GetEpoch(),
 				Round:      epochStartShardData.GetRound(),
 				Nonce:      epochStartShardData.GetNonce(),
