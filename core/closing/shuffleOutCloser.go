@@ -11,7 +11,7 @@ import (
 	"github.com/multiversx/mx-chain-core-go/data/endProcess"
 )
 
-const minDuration = time.Second
+const minDuration = time.Millisecond * 100
 
 type shuffleOutCloser struct {
 	minWaitDuration time.Duration
