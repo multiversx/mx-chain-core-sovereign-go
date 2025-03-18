@@ -20,15 +20,6 @@ func (ih *IncomingHeader) GetIncomingEventHandlers() []data.EventHandler {
 	return logHandlers
 }
 
-// GetHeaderHandler returns the incoming headerV2 as a header handler
-func (ih *IncomingHeader) GetHeaderHandler() data.HeaderHandler {
-	if ih == nil {
-		return nil
-	}
-
-	return ih.GetHeader()
-}
-
 // IsInterfaceNil checks if the underlying pointer is nil
 func (ih *IncomingHeader) IsInterfaceNil() bool {
 	return ih == nil
