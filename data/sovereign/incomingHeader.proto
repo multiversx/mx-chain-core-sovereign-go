@@ -9,17 +9,12 @@ option (gogoproto.stable_marshaler_all) = true;
 
 import "github.com/gogo/protobuf/gogoproto/gogo.proto";
 import "github.com/multiversx/mx-chain-core-go/data/transaction/log.proto";
-
-enum ChainID {
-  MVX = 0;
-  ETH = 1;
-  SUI = 2;
-};
+import "github.com/multiversx/mx-chain-core-sovereign-go/data/sovereign/dto/sourceChainID.proto";
 
 message IncomingHeader {
   // For now, these are the bytes representing the marshalled header/block/checkpoint from another chain
-  bytes Proof                    = 1 [(gogoproto.jsontag) = "incomingEvents,omitempty"];
-  ChainID ChainID                = 2;
+  bytes Proof                  = 1 [(gogoproto.jsontag) = "incomingEvents,omitempty"];
+  ChainID SourceChainID        = 2;
   // We will store each nonce/round/checkpoint/etc. as a big.Int (eth uses big ints)
   // This could actually be the round for mvx, since we will use this data in node's config to start notarization from specific checkpoint
   bytes Nonce                   = 3 [(gogoproto.casttypewith) = "math/big.Int;github.com/multiversx/mx-chain-core-go/data.BigIntCaster"];

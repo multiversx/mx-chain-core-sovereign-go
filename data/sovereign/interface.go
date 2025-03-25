@@ -4,13 +4,14 @@ import (
 	"math/big"
 
 	"github.com/multiversx/mx-chain-core-go/data"
+	"github.com/multiversx/mx-chain-core-go/data/sovereign/dto"
 )
 
 // IncomingHeaderHandler defines the incoming header to a sovereign chain that is sent by a notifier
 type IncomingHeaderHandler interface {
 	GetProof() []byte
 	GetNonceBI() *big.Int
-	GetChainID() ChainID
+	GetSourceChainID() dto.ChainID
 	GetIncomingEventHandlers() []data.EventHandler
 	IsInterfaceNil() bool
 }
