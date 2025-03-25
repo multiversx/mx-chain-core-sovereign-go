@@ -503,6 +503,7 @@ type UserAccountHandler interface {
 type ShardHeaderExtendedHandler interface {
 	ShardHeaderHandler
 	GetProof() []byte
+	GetNonceBI() *big.Int
 	GetIncomingMiniBlockHandlers() []MiniBlockHandler
 	SetIncomingMiniBlockHandlers(miniBlockHandlers []MiniBlockHandler) error
 	GetHeaderHandler() HeaderHandler

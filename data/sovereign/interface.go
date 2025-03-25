@@ -9,7 +9,7 @@ import (
 // IncomingHeaderHandler defines the incoming header to a sovereign chain that is sent by a notifier
 type IncomingHeaderHandler interface {
 	GetProof() []byte
-	GetNonce() *big.Int
+	GetNonceBI() *big.Int
 	GetChainID() ChainID
 	GetIncomingEventHandlers() []data.EventHandler
 	IsInterfaceNil() bool
