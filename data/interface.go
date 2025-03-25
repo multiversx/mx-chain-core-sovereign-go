@@ -502,6 +502,7 @@ type UserAccountHandler interface {
 // ShardHeaderExtendedHandler extends ShardHeaderHandler interface, by also including incoming mini blocks needed by sovereign chain
 type ShardHeaderExtendedHandler interface {
 	ShardHeaderHandler
+	GetProof() []byte
 	GetIncomingMiniBlockHandlers() []MiniBlockHandler
 	SetIncomingMiniBlockHandlers(miniBlockHandlers []MiniBlockHandler) error
 	GetHeaderHandler() HeaderHandler
