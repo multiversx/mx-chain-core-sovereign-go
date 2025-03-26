@@ -510,4 +510,5 @@ type ShardHeaderExtendedHandler interface {
 	SetIncomingMiniBlockHandlers(miniBlockHandlers []MiniBlockHandler) error
 	GetHeaderHandler() HeaderHandler
 	GetIncomingEventHandlers() []EventHandler
+	SetIncomingEventHandlers(events []EventHandler) error
 }
