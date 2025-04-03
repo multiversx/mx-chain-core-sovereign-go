@@ -3,7 +3,11 @@ package core
 import (
 	"crypto/rand"
 	"os"
+	"time"
 )
+
+// MinRoundDuration defines the min round duration in milliseconds
+const MinRoundDuration = time.Millisecond * 500
 
 // EmptyChannel empties the given channel
 func EmptyChannel(ch chan bool) int {
