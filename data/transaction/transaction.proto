@@ -32,4 +32,7 @@ message Transaction {
 	bytes                   GuardianSignature  = 15 [(gogoproto.jsontag) = "guardianSignature,omitempty"];
 	bytes                   RelayerAddr        = 16 [(gogoproto.jsontag) = "relayer,omitempty"];
 	bytes                   RelayerSignature   = 17 [(gogoproto.jsontag) = "relayerSignature,omitempty"];
+  bytes                   RcvAliasAddr       = 18 [(gogoproto.jsontag) = "rcvAliasAddr,omitempty"];
+  bytes                   SndAliasAddr       = 19 [(gogoproto.jsontag) = "sndAliasAddr,omitempty"];
+  bytes                   OriginalData       = 20 [(gogoproto.jsontag) = "originalData,omitempty"];
 }
