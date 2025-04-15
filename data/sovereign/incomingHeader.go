@@ -2,7 +2,11 @@
 
 package sovereign
 
-import "github.com/multiversx/mx-chain-core-go/data"
+import (
+	"math/big"
+
+	"github.com/multiversx/mx-chain-core-go/data"
+)
 
 // GetIncomingEventHandlers returns the incoming events as an array of event handlers
 func (ih *IncomingHeader) GetIncomingEventHandlers() []data.EventHandler {
@@ -20,13 +24,9 @@ func (ih *IncomingHeader) GetIncomingEventHandlers() []data.EventHandler {
 	return logHandlers
 }
 
-// GetHeaderHandler returns the incoming headerV2 as a header handler
-func (ih *IncomingHeader) GetHeaderHandler() data.HeaderHandler {
-	if ih == nil {
-		return nil
-	}
-
-	return ih.GetHeader()
+// GetNonceBI returns the nonce as big.Int
+func (ih *IncomingHeader) GetNonceBI() *big.Int {
+	return ih.Nonce
 }
 
 // IsInterfaceNil checks if the underlying pointer is nil
