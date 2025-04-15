@@ -16,8 +16,7 @@ import "github.com/multiversx/mx-chain-core-go/data/transaction/log.proto";
 message ShardHeaderExtended {
   HeaderV2           Header             = 1 [(gogoproto.jsontag) = "header"];
   bytes              Proof              = 2 [(gogoproto.jsontag) = "proof"];
-  bytes              NonceBI            = 3 [(gogoproto.casttypewith) = "math/big.Int;github.com/multiversx/mx-chain-core-go/data.BigIntCaster"];
-  ChainID            SourceChainID      = 4 [(gogoproto.jsontag) = "sourceChainID"];
-  repeated MiniBlock IncomingMiniBlocks = 5 [(gogoproto.jsontag) = "incomingMiniBlocks,omitempty"];
-  repeated Event     IncomingEvents     = 6 [(gogoproto.jsontag) = "incomingEvents,omitempty"];
+  ChainID            SourceChainID      = 3 [(gogoproto.jsontag) = "sourceChainID"];
+  repeated MiniBlock IncomingMiniBlocks = 4 [(gogoproto.jsontag) = "incomingMiniBlocks,omitempty"];
+  repeated Event     IncomingEvents     = 5 [(gogoproto.jsontag) = "incomingEvents,omitempty"];
 }
