@@ -5,6 +5,9 @@ import (
 	"os"
 )
 
+// MinRoundDurationMS defines the min round duration in milliseconds
+const MinRoundDurationMS = 500
+
 // EmptyChannel empties the given channel
 func EmptyChannel(ch chan bool) int {
 	readsCnt := 0
