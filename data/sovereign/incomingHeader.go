@@ -3,8 +3,6 @@
 package sovereign
 
 import (
-	"math/big"
-
 	"github.com/multiversx/mx-chain-core-go/data"
 )
 
@@ -22,11 +20,6 @@ func (ih *IncomingHeader) GetIncomingEventHandlers() []data.EventHandler {
 	}
 
 	return logHandlers
-}
-
-// GetNonceBI returns the nonce as big.Int
-func (ih *IncomingHeader) GetNonceBI() *big.Int {
-	return ih.Nonce
 }
 
 // IsInterfaceNil checks if the underlying pointer is nil

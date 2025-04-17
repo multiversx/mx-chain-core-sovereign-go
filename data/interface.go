@@ -504,7 +504,6 @@ type UserAccountHandler interface {
 type ShardHeaderExtendedHandler interface {
 	ShardHeaderHandler
 	GetProof() []byte
-	GetNonceBI() *big.Int
 	GetSourceChainID() dto.ChainID
 	GetIncomingMiniBlockHandlers() []MiniBlockHandler
 	SetIncomingMiniBlockHandlers(miniBlockHandlers []MiniBlockHandler) error

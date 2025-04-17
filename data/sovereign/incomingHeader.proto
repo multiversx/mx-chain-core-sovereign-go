@@ -13,10 +13,9 @@ import "github.com/multiversx/mx-chain-core-sovereign-go/data/sovereign/dto/sour
 
 message IncomingHeader {
   // For now, these are the bytes representing the marshalled header/block/checkpoint from another chain
-  bytes Proof                  = 1 [(gogoproto.jsontag) = "incomingEvents,omitempty"];
-  ChainID SourceChainID        = 2;
-  // We will store each nonce/round/checkpoint/etc. as a big.Int (eth uses big ints)
-  // This could actually be the round for mvx, since we will use this data in node's config to start notarization from specific checkpoint
-  bytes Nonce                   = 3 [(gogoproto.casttypewith) = "math/big.Int;github.com/multiversx/mx-chain-core-go/data.BigIntCaster"];
+  bytes Proof                  = 1 [(gogoproto.jsontag) = "proof"];
+  ChainID SourceChainID        = 2 [(gogoproto.jsontag) = "sourceChainID"];
+  // This represents a nonce/round/checkpoint/etc. for each chain
+  uint64 Nonce                  = 3 [(gogoproto.jsontag) = "nonce"];
   repeated Event IncomingEvents = 4 [(gogoproto.jsontag) = "incomingEvents,omitempty"];
 }
