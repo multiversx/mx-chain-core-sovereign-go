@@ -125,12 +125,14 @@ type SovereignChainHeaderHandler interface {
 type OutGoingMiniBlockHeaderHandler interface {
 	GetHash() []byte
 	GetOutGoingOperationsHash() []byte
+	GetChainID() dto.ChainID
 	GetAggregatedSignatureOutGoingOperations() []byte
 	GetLeaderSignatureOutGoingOperations() []byte
 	GetOutGoingMBTypeInt32() int32
 
 	SetHash(hash []byte) error
 	SetOutGoingOperationsHash(hash []byte) error
+	SetChainID(chainID dto.ChainID) error
 	SetLeaderSignatureOutGoingOperations(sig []byte) error
 	SetAggregatedSignatureOutGoingOperations(sig []byte) error
 	SetOutGoingMBTypeInt32(mbType int32) error

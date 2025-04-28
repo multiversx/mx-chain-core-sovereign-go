@@ -9,6 +9,7 @@ import (
 	"github.com/multiversx/mx-chain-core-go/core/check"
 	"github.com/multiversx/mx-chain-core-go/data"
 	"github.com/multiversx/mx-chain-core-go/data/headerVersionData"
+	"github.com/multiversx/mx-chain-core-go/data/sovereign/dto"
 )
 
 // GetAdditionalData returns nil for the sovereign chain header
@@ -806,6 +807,16 @@ func (omb *OutGoingMiniBlockHeader) SetOutGoingMBTypeInt32(mbType int32) error {
 	}
 
 	omb.Type = OutGoingMBType(mbType)
+	return nil
+}
+
+// SetChainID sets the chain id
+func (omb *OutGoingMiniBlockHeader) SetChainID(chainID dto.ChainID) error {
+	if omb == nil {
+		return data.ErrNilPointerReceiver
+	}
+
+	omb.ChainID = chainID
 	return nil
 }
 

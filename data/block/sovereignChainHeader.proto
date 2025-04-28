@@ -9,6 +9,7 @@ option (gogoproto.stable_marshaler_all) = true;
 import "github.com/gogo/protobuf/gogoproto/gogo.proto";
 import "block.proto";
 import "metaBlock.proto";
+import "github.com/multiversx/mx-chain-core-sovereign-go/data/sovereign/dto/sourceChainID.proto";
 
 // EpochStart holds the block information for end-of-epoch
 message EpochStartSovereign {
@@ -45,8 +46,9 @@ enum OutGoingMBType {
 message OutGoingMiniBlockHeader {
   OutGoingMBType Type                                  = 1 [(gogoproto.jsontag) = "type,omitempty"];
   bytes          Hash                                  = 2 [(gogoproto.jsontag) = "hash,omitempty"];
-  bytes          OutGoingOperationsHash                = 3 [(gogoproto.jsontag) = "outGoingOperationsHash,omitempty"];
-  bytes          AggregatedSignatureOutGoingOperations = 4 [(gogoproto.jsontag) = "aggregatedSignatureOutGoingOperations,omitempty"];
-  bytes          LeaderSignatureOutGoingOperations     = 5 [(gogoproto.jsontag) = "leaderSignatureOutGoingOperations,omitempty"];
+  ChainID        ChainID                               = 3 [(gogoproto.jsontag) = "chainID"];
+  bytes          OutGoingOperationsHash                = 4 [(gogoproto.jsontag) = "outGoingOperationsHash,omitempty"];
+  bytes          AggregatedSignatureOutGoingOperations = 5 [(gogoproto.jsontag) = "aggregatedSignatureOutGoingOperations,omitempty"];
+  bytes          LeaderSignatureOutGoingOperations     = 6 [(gogoproto.jsontag) = "leaderSignatureOutGoingOperations,omitempty"];
 
 }
