@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"math/big"
 
-	"github.com/multiversx/mx-chain-core-go/core"
 	"github.com/multiversx/mx-chain-core-go/core/check"
 	"github.com/multiversx/mx-chain-core-go/data"
 	"github.com/multiversx/mx-chain-core-go/data/headerVersionData"
@@ -927,7 +926,7 @@ func (m *EpochStartSovereign) GetLastFinalizedHeaderHandlers() []data.EpochStart
 	}
 
 	epochStartShardData := make([]data.EpochStartShardDataHandler, 0)
-	if m.LastFinalizedCrossChainHeader.ShardID == core.MainChainShardId {
+	if dto.IsValidCrossChainID(dto.ChainID(m.LastFinalizedCrossChainHeader.ShardID)) {
 		epochStartShardData = append(epochStartShardData, &m.LastFinalizedCrossChainHeader)
 	}
 
@@ -950,7 +949,7 @@ func (m *EpochStartSovereign) SetLastFinalizedHeaders(epochStartShardDataHandler
 	}
 
 	for _, epochStartShardData := range epochStartShardDataHandlers {
-		if epochStartShardData.GetShardID() == core.MainChainShardId {
+		if dto.IsValidCrossChainID(dto.ChainID(epochStartShardData.GetShardID())) {
 			m.LastFinalizedCrossChainHeader = EpochStartCrossChainData{
 				ShardID:    epochStartShardData.GetShardID(),
 				Epoch:      epochStartShardData.GetEpoch(),

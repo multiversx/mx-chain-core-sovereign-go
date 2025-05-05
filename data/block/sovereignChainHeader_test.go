@@ -6,8 +6,8 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"github.com/multiversx/mx-chain-core-go/core"
 	"github.com/multiversx/mx-chain-core-go/data"
+	"github.com/multiversx/mx-chain-core-go/data/sovereign/dto"
 )
 
 func TestSovereignChainHeader_GetEpochStartHandler(t *testing.T) {
@@ -36,7 +36,7 @@ func TestSovereignChainHeader_GetEpochStartHandler(t *testing.T) {
 	require.Nil(t, err)
 	require.Empty(t, sovHdr.GetEpochStartHandler().GetLastFinalizedHeaderHandlers())
 
-	epochStartData.ShardID = core.MainChainShardId
+	epochStartData.ShardID = uint32(dto.MVX)
 	epochStartSov.LastFinalizedCrossChainHeader = epochStartData
 	err = sovHdr.GetEpochStartHandler().SetLastFinalizedHeaders([]data.EpochStartShardDataHandler{&epochStartData})
 	require.Nil(t, err)
