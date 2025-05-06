@@ -413,13 +413,35 @@ func (sch *SovereignChainHeader) SetValidatorStatsRootHash(rootHash []byte) erro
 	return nil
 }
 
-// SetExtendedShardHeaderHashes sets the extended shard header hashes
-func (sch *SovereignChainHeader) SetExtendedShardHeaderHashes(hdrHashes [][]byte) error {
+// GetChainDataHandlers returns the chains data handler
+func (sch *SovereignChainHeader) GetChainDataHandlers() []data.ChainDataHandler {
+	if sch == nil {
+		return nil
+	}
+
+	ret := make([]data.ChainDataHandler, len(sch.ChainsData))
+
+	for idx, chainData := range sch.ChainsData {
+		copyChainData := chainData
+		ret[idx] = &copyChainData
+	}
+
+	return ret
+}
+
+// SetChainDataHandlers sets the chains data handler
+func (sch *SovereignChainHeader) SetChainDataHandlers(chainsData []data.ChainDataHandler) error {
 	if sch == nil {
 		return data.ErrNilPointerReceiver
 	}
 
-	sch.ExtendedShardHeaderHashes = hdrHashes
+	sch.ChainsData = make([]ChainData, len(chainsData))
+	for idx, chainData := range chainsData {
+		sch.ChainsData[idx] = ChainData{
+			ExtendedShardHeaderHashes: chainData.GetExtendedShardHeaderHashes(),
+			ChainID:                   chainData.GetChainID(),
+		}
+	}
 
 	return nil
 }
@@ -979,5 +1001,25 @@ func (m *EpochStartSovereign) SetEconomics(economicsHandler data.EconomicsHandle
 
 	m.Economics = *ec
 
+	return nil
+}
+
+// SetExtendedShardHeaderHashes sets the extended shard header hashes
+func (m *ChainData) SetExtendedShardHeaderHashes(hdrHashes [][]byte) error {
+	if m == nil {
+		return data.ErrNilPointerReceiver
+	}
+
+	m.ExtendedShardHeaderHashes = hdrHashes
+	return nil
+}
+
+// SetChainID sets the chain id
+func (m *ChainData) SetChainID(chainID dto.ChainID) error {
+	if m == nil {
+		return data.ErrNilPointerReceiver
+	}
+
+	m.ChainID = chainID
 	return nil
 }
