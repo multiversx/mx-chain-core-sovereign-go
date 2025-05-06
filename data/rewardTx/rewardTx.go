@@ -134,6 +134,14 @@ func (rtx *RewardTx) SetGasPrice(_ uint64) {
 func (rtx *RewardTx) SetSignature(_ []byte) {
 }
 
+// SetGuardianAddr sets the guardian address of the reward transaction
+func (rtx *RewardTx) SetGuardianAddr(_ []byte) {
+}
+
+// SetGuardianSignature sets the guardian signature of the reward transaction
+func (rtx *RewardTx) SetGuardianSignature(_ []byte) {
+}
+
 // HasOptionGuardianSet checks if guardian is set for the receipt
 func (rtx *RewardTx) HasOptionGuardianSet() bool {
 	return false

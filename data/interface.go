@@ -395,6 +395,8 @@ type TransactionHandler interface {
 	SetGasLimit(uint64)
 	SetGasPrice(uint64)
 	SetSignature([]byte)
+	SetGuardianAddr([]byte)
+	SetGuardianSignature([]byte)
 	Size() int
 
 	CheckIntegrity() error
