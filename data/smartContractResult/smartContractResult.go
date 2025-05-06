@@ -124,6 +124,14 @@ func (scr *SmartContractResult) SetGasPrice(gasPrice uint64) {
 func (scr *SmartContractResult) SetSignature(_ []byte) {
 }
 
+// SetGuardianAddr sets the guardian address of the smart contract result
+func (scr *SmartContractResult) SetGuardianAddr(_ []byte) {
+}
+
+// SetGuardianSignature sets the guardian signature of the smart contract result
+func (scr *SmartContractResult) SetGuardianSignature(_ []byte) {
+}
+
 // HasOptionGuardianSet checks if guardian is set for the smart contract result
 func (scr *SmartContractResult) HasOptionGuardianSet() bool {
 	return false

@@ -120,6 +120,14 @@ func (rpt *Receipt) SetGasPrice(_ uint64) {
 func (rpt *Receipt) SetSignature(_ []byte) {
 }
 
+// SetGuardianAddr sets the guardian address of the receipt
+func (rpt *Receipt) SetGuardianAddr(_ []byte) {
+}
+
+// SetGuardianSignature sets the guardian signature of the receipt
+func (rpt *Receipt) SetGuardianSignature(_ []byte) {
+}
+
 // HasOptionGuardianSet checks if guardian is set for the receipt
 func (rpt *Receipt) HasOptionGuardianSet() bool {
 	return false

@@ -51,6 +51,16 @@ func (tx *Transaction) SetSignature(signature []byte) {
 	tx.Signature = signature
 }
 
+// SetGuardianAddr sets the guardian address of the transaction
+func (tx *Transaction) SetGuardianAddr(addr []byte) {
+	tx.GuardianAddr = addr
+}
+
+// SetGuardianSignature sets the guardian signature of the transaction
+func (tx *Transaction) SetGuardianSignature(signature []byte) {
+	tx.GuardianSignature = signature
+}
+
 // TrimSlicePtr creates a copy of the provided slice without the excess capacity
 func TrimSlicePtr(in []*Transaction) []*Transaction {
 	if len(in) == 0 {
