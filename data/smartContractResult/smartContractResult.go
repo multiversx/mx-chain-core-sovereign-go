@@ -69,3 +69,62 @@ func (scr *SmartContractResult) CheckIntegrity() error {
 
 	return nil
 }
+
+// GetChainID returns the chain id from the smart contract result
+func (scr *SmartContractResult) GetChainID() []byte {
+	return nil
+}
+
+// GetSndUserName returns the sender username from the smart contract result
+func (_ *SmartContractResult) GetSndUserName() []byte {
+	return nil
+}
+
+// GetVersion returns the version of the smart contract result
+func (_ *SmartContractResult) GetVersion() uint32 {
+	return 0
+}
+
+// GetSignature returns the signature of the smart contract result
+func (scr *SmartContractResult) GetSignature() []byte {
+	return nil
+}
+
+// GetOptions returns the options of the smart contract result
+func (_ *SmartContractResult) GetOptions() uint32 {
+	return 0
+}
+
+// GetGuardianAddr returns the guardian address from the smart contract result
+func (scr *SmartContractResult) GetGuardianAddr() []byte {
+	return nil
+}
+
+// GetGuardianSignature returns the guardian signature of the smart contract result
+func (scr *SmartContractResult) GetGuardianSignature() []byte {
+	return nil
+}
+
+// GetRelayerSignature returns the relayer signature of the smart contract result
+func (scr *SmartContractResult) GetRelayerSignature() []byte {
+	return nil
+}
+
+// SetGasLimit sets the gas limit of the smart contract result
+func (scr *SmartContractResult) SetGasLimit(gasLimit uint64) {
+	scr.GasLimit = gasLimit
+}
+
+// SetGasPrice sets the gas price of the smart contract result
+func (scr *SmartContractResult) SetGasPrice(gasPrice uint64) {
+	scr.GasPrice = gasPrice
+}
+
+// SetSignature sets the signature of the smart contract result
+func (scr *SmartContractResult) SetSignature(_ []byte) {
+}
+
+// HasOptionGuardianSet checks if guardian is set for the smart contract result
+func (scr *SmartContractResult) HasOptionGuardianSet() bool {
+	return false
+}

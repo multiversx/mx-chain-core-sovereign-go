@@ -76,3 +76,65 @@ func (rtx *RewardTx) CheckIntegrity() error {
 
 	return nil
 }
+
+// GetChainID returns the chain id from the reward transaction
+func (rtx *RewardTx) GetChainID() []byte {
+	return nil
+}
+
+// GetSndUserName returns the sender user name from the receipt
+func (rtx *RewardTx) GetSndUserName() []byte {
+	return nil
+}
+
+// GetVersion returns the version of the reward transaction
+func (rtx *RewardTx) GetVersion() uint32 {
+	return 0
+}
+
+// GetSignature returns the signature of the reward transaction
+func (rtx *RewardTx) GetSignature() []byte {
+	return nil
+}
+
+// GetOptions returns the options of the reward transaction
+func (rtx *RewardTx) GetOptions() uint32 {
+	return 0
+}
+
+// GetGuardianAddr returns the guardian address from the reward transaction
+func (rtx *RewardTx) GetGuardianAddr() []byte {
+	return nil
+}
+
+// GetGuardianSignature returns the guardian signature of the reward transaction
+func (rtx *RewardTx) GetGuardianSignature() []byte {
+	return nil
+}
+
+// GetRelayerAddr returns the relayer address from the reward transaction
+func (rtx *RewardTx) GetRelayerAddr() []byte {
+	return nil
+}
+
+// GetRelayerSignature returns the relayer signature of the reward transaction
+func (rtx *RewardTx) GetRelayerSignature() []byte {
+	return nil
+}
+
+// SetGasLimit sets the gas limit of the reward transaction
+func (rtx *RewardTx) SetGasLimit(_ uint64) {
+}
+
+// SetGasPrice sets the gas price of the reward transaction
+func (rtx *RewardTx) SetGasPrice(_ uint64) {
+}
+
+// SetSignature sets the signature of the reward transaction
+func (rtx *RewardTx) SetSignature(_ []byte) {
+}
+
+// HasOptionGuardianSet checks if guardian is set for the receipt
+func (rtx *RewardTx) HasOptionGuardianSet() bool {
+	return false
+}

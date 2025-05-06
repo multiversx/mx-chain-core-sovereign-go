@@ -62,3 +62,65 @@ func (_ *Receipt) GetRcvUserName() []byte {
 func (rpt *Receipt) CheckIntegrity() error {
 	return nil
 }
+
+// GetChainID returns the chain id of the receipt
+func (rpt *Receipt) GetChainID() []byte {
+	return nil
+}
+
+// GetSndUserName returns the sender username from the receipt
+func (rpt *Receipt) GetSndUserName() []byte {
+	return nil
+}
+
+// GetVersion returns the version of the receipt
+func (rpt *Receipt) GetVersion() uint32 {
+	return 0
+}
+
+// GetSignature returns the signature of the receipt
+func (rpt *Receipt) GetSignature() []byte {
+	return nil
+}
+
+// GetOptions returns the options of the receipt
+func (rpt *Receipt) GetOptions() uint32 {
+	return 0
+}
+
+// GetGuardianAddr returns the guardian address from the receipt
+func (rpt *Receipt) GetGuardianAddr() []byte {
+	return nil
+}
+
+// GetGuardianSignature returns the guardian signature of the receipt
+func (rpt *Receipt) GetGuardianSignature() []byte {
+	return nil
+}
+
+// GetRelayerAddr returns the relayer address from the receipt
+func (rpt *Receipt) GetRelayerAddr() []byte {
+	return nil
+}
+
+// GetRelayerSignature returns the relayer signature of the receipt
+func (rpt *Receipt) GetRelayerSignature() []byte {
+	return nil
+}
+
+// SetGasLimit sets the gas limit of the receipt
+func (rpt *Receipt) SetGasLimit(_ uint64) {
+}
+
+// SetGasPrice sets the gas price of the receipt
+func (rpt *Receipt) SetGasPrice(_ uint64) {
+}
+
+// SetSignature sets the signature of the receipt
+func (rpt *Receipt) SetSignature(_ []byte) {
+}
+
+// HasOptionGuardianSet checks if guardian is set for the receipt
+func (rpt *Receipt) HasOptionGuardianSet() bool {
+	return false
+}
