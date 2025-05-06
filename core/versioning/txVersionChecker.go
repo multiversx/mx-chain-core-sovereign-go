@@ -2,6 +2,7 @@ package versioning
 
 import (
 	"github.com/multiversx/mx-chain-core-go/core"
+	"github.com/multiversx/mx-chain-core-go/data"
 	"github.com/multiversx/mx-chain-core-go/data/transaction"
 )
 
@@ -33,8 +34,8 @@ func (tvc *txVersionChecker) IsSignedWithHash(tx *transaction.Transaction) bool 
 }
 
 // IsGuardedTransaction will return true if transaction also holds a guardian signature
-func (tvc *txVersionChecker) IsGuardedTransaction(tx *transaction.Transaction) bool {
-	if tx.Version > core.InitialVersionOfTransaction {
+func (tvc *txVersionChecker) IsGuardedTransaction(tx data.TransactionHandler) bool {
+	if tx.GetVersion() > core.InitialVersionOfTransaction {
 		return tx.HasOptionGuardianSet()
 	}
 

@@ -354,14 +354,27 @@ type TransactionHandler interface {
 	GetSndAddr() []byte
 	GetGasLimit() uint64
 	GetGasPrice() uint64
+	GetChainID() []byte
+	GetSndUserName() []byte
+	GetVersion() uint32
+	GetSignature() []byte
+	GetOptions() uint32
+	GetGuardianAddr() []byte
+	GetGuardianSignature() []byte
+	GetRelayerAddr() []byte
+	GetRelayerSignature() []byte
 
 	SetValue(*big.Int)
 	SetData([]byte)
 	SetRcvAddr([]byte)
 	SetSndAddr([]byte)
+	SetGasLimit(uint64)
+	SetGasPrice(uint64)
+	SetSignature([]byte)
 	Size() int
 
 	CheckIntegrity() error
+	HasOptionGuardianSet() bool
 }
 
 type TxWithExecutionOrderHandler interface {
