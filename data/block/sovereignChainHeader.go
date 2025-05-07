@@ -728,32 +728,6 @@ func (sch *SovereignChainHeader) GetEpochStartHandler() data.EpochStartHandler {
 	return &sch.EpochStart
 }
 
-// GetLastFinalizedCrossChainHeaderHandler returns the last finalized cross chain header data
-func (sch *SovereignChainHeader) GetLastFinalizedCrossChainHeaderHandler() data.EpochStartChainDataHandler {
-	if sch == nil {
-		return nil
-	}
-
-	return &sch.EpochStart.LastFinalizedCrossChainHeader
-}
-
-// SetLastFinalizedCrossChainHeaderHandler sets the last finalized cross chain header handler
-func (sch *SovereignChainHeader) SetLastFinalizedCrossChainHeaderHandler(crossChainData data.EpochStartChainDataHandler) error {
-	if sch == nil {
-		return data.ErrNilPointerReceiver
-	}
-
-	sch.EpochStart.LastFinalizedCrossChainHeader = EpochStartCrossChainData{
-		ShardID:    crossChainData.GetShardID(),
-		Epoch:      crossChainData.GetEpoch(),
-		Round:      crossChainData.GetRound(),
-		Nonce:      crossChainData.GetNonce(),
-		HeaderHash: crossChainData.GetHeaderHash(),
-	}
-
-	return nil
-}
-
 // GetShardInfoHandlers returns empty slice
 func (sch *SovereignChainHeader) GetShardInfoHandlers() []data.ShardDataHandler {
 	if sch == nil {
@@ -941,15 +915,16 @@ func (essd *EpochStartCrossChainData) SetPendingMiniBlockHeaders(_ []data.MiniBl
 	return nil
 }
 
-// GetLastFinalizedHeaderHandlers returns last cross main chain finalized header in a slice w.r.t to the interface
+// GetLastFinalizedHeaderHandlers returns last cross main chains finalized header in a slice w.r.t to the interface
 func (m *EpochStartSovereign) GetLastFinalizedHeaderHandlers() []data.EpochStartShardDataHandler {
 	if m == nil {
 		return nil
 	}
 
-	epochStartShardData := make([]data.EpochStartShardDataHandler, 0)
-	if dto.IsValidCrossChainID(dto.ChainID(m.LastFinalizedCrossChainHeader.ShardID)) {
-		epochStartShardData = append(epochStartShardData, &m.LastFinalizedCrossChainHeader)
+	epochStartShardData := make([]data.EpochStartShardDataHandler, len(m.LastFinalizedCrossChainHeader))
+
+	for i := range m.LastFinalizedCrossChainHeader {
+		epochStartShardData[i] = &m.LastFinalizedCrossChainHeader[i]
 	}
 
 	return epochStartShardData
@@ -964,23 +939,26 @@ func (m *EpochStartSovereign) GetEconomicsHandler() data.EconomicsHandler {
 	return &m.Economics
 }
 
-// SetLastFinalizedHeaders sets epoch start data for main chain chain only
+// SetLastFinalizedHeaders sets epoch start data for main chains chain only
 func (m *EpochStartSovereign) SetLastFinalizedHeaders(epochStartShardDataHandlers []data.EpochStartShardDataHandler) error {
 	if m == nil {
 		return data.ErrNilPointerReceiver
 	}
 
-	for _, epochStartShardData := range epochStartShardDataHandlers {
-		if dto.IsValidCrossChainID(dto.ChainID(epochStartShardData.GetShardID())) {
-			m.LastFinalizedCrossChainHeader = EpochStartCrossChainData{
-				ShardID:    epochStartShardData.GetShardID(),
-				Epoch:      epochStartShardData.GetEpoch(),
-				Round:      epochStartShardData.GetRound(),
-				Nonce:      epochStartShardData.GetNonce(),
-				HeaderHash: epochStartShardData.GetHeaderHash(),
-			}
+	epochStartData := make([]EpochStartCrossChainData, len(epochStartShardDataHandlers))
+	for i, epochStartChainData := range epochStartShardDataHandlers {
+		chainData, ok := epochStartChainData.(*EpochStartCrossChainData)
+		if !ok {
+			return fmt.Errorf("%w in EpochStartSovereign.SetLastFinalizedHeaders", data.ErrInvalidTypeAssertion)
 		}
+		if chainData == nil {
+			return fmt.Errorf("%w in EpochStartSovereign.SetLastFinalizedHeaders", data.ErrNilPointerDereference)
+		}
+
+		epochStartData[i] = *chainData
 	}
+
+	m.LastFinalizedCrossChainHeader = epochStartData
 
 	return nil
 }

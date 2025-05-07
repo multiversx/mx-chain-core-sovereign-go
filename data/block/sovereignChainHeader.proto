@@ -13,8 +13,8 @@ import "github.com/multiversx/mx-chain-core-sovereign-go/data/sovereign/dto/sour
 
 // EpochStart holds the block information for end-of-epoch
 message EpochStartSovereign {
-  Economics                Economics                     = 1 [(gogoproto.jsontag) = "economics", (gogoproto.nullable) = false];
-  EpochStartCrossChainData LastFinalizedCrossChainHeader = 2 [(gogoproto.jsontag) = "lastFinalizedCrossChainHeader", (gogoproto.nullable) = false];
+  Economics                         Economics                     = 1 [(gogoproto.jsontag) = "economics", (gogoproto.nullable) = false];
+  repeated EpochStartCrossChainData LastFinalizedCrossChainHeader = 2 [(gogoproto.jsontag) = "lastFinalizedCrossChainHeader", (gogoproto.nullable) = false];
 }
 
 // EpochStartShardData hold the last finalized headers hash and state root hash
