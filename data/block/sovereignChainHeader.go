@@ -624,9 +624,13 @@ func (sch *SovereignChainHeader) SetOutGoingMiniBlockHeaderHandler(mbHeader data
 		return data.ErrNilOutGoingMiniBlockHeaderHandlerProvided
 	}
 
-	outGoingMbHdr := createOutGoingMbHeader(mbHeader)
+	outGoingMbHdr, err := createOutGoingMbHeader(mbHeader)
+	if err != nil {
+		return err
+	}
+
 	for idx, currOutGoingMbHdr := range sch.OutGoingMiniBlockHeaders {
-		if int32(currOutGoingMbHdr.Type) == mbHeader.GetOutGoingMBTypeInt32() {
+		if int32(currOutGoingMbHdr.Type) == mbHeader.GetOutGoingMBTypeInt32() && currOutGoingMbHdr.ChainID == mbHeader.GetChainID() {
 			sch.OutGoingMiniBlockHeaders[idx] = outGoingMbHdr
 			return nil
 		}
@@ -636,14 +640,17 @@ func (sch *SovereignChainHeader) SetOutGoingMiniBlockHeaderHandler(mbHeader data
 	return nil
 }
 
-func createOutGoingMbHeader(mbHeader data.OutGoingMiniBlockHeaderHandler) *OutGoingMiniBlockHeader {
-	return &OutGoingMiniBlockHeader{
-		Type:                                  OutGoingMBType(mbHeader.GetOutGoingMBTypeInt32()),
-		Hash:                                  mbHeader.GetHash(),
-		OutGoingOperationsHash:                mbHeader.GetOutGoingOperationsHash(),
-		AggregatedSignatureOutGoingOperations: mbHeader.GetAggregatedSignatureOutGoingOperations(),
-		LeaderSignatureOutGoingOperations:     mbHeader.GetLeaderSignatureOutGoingOperations(),
+func createOutGoingMbHeader(mbHeader data.OutGoingMiniBlockHeaderHandler) (*OutGoingMiniBlockHeader, error) {
+	outGoingMbHdr, castOk := mbHeader.(*OutGoingMiniBlockHeader)
+	if !castOk {
+		return nil, fmt.Errorf("%w in createOutGoingMbHeader", data.ErrWrongTypeAssertion)
 	}
+	if check.IfNil(outGoingMbHdr) {
+		return nil, fmt.Errorf("%w in createOutGoingMbHeader", data.ErrNilPointerDereference)
+	}
+
+	outGoingMbCopy := *outGoingMbHdr
+	return &outGoingMbCopy, nil
 }
 
 // SetOutGoingMiniBlockHeaderHandlers sets the outgoing mini block headers
@@ -657,9 +664,13 @@ func (sch *SovereignChainHeader) SetOutGoingMiniBlockHeaderHandlers(mbHeaders []
 		return nil
 	}
 
+	var err error
 	miniBlockHeaders := make([]*OutGoingMiniBlockHeader, len(mbHeaders))
 	for i, mbHeaderHandler := range mbHeaders {
-		miniBlockHeaders[i] = createOutGoingMbHeader(mbHeaderHandler)
+		miniBlockHeaders[i], err = createOutGoingMbHeader(mbHeaderHandler)
+		if err != nil {
+			return err
+		}
 	}
 
 	sch.OutGoingMiniBlockHeaders = miniBlockHeaders
