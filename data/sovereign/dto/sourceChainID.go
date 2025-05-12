@@ -8,8 +8,8 @@ var ValidChains = map[ChainID]struct{}{
 	ETH: {},
 }
 
-// ValidChainName defines supported cross chain id names
-var ValidChainName = map[string]struct{}{
+// ValidChainNames defines supported cross chain id names
+var ValidChainNames = map[string]struct{}{
 	MVX.String(): {},
 	ETH.String(): {},
 }
@@ -20,7 +20,8 @@ func IsValidCrossChainID(id ChainID) bool {
 	return ok
 }
 
+// IsValidCrossChainIDString returns true if the provided chain id as string is supported
 func IsValidCrossChainIDString(id string) bool {
-	_, ok := ValidChainName[id]
+	_, ok := ValidChainNames[id]
 	return ok
 }

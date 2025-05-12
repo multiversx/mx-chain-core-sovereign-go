@@ -436,11 +436,16 @@ func (sch *SovereignChainHeader) SetChainDataHandlers(chainsData []data.ChainDat
 	}
 
 	sch.ChainsData = make([]ChainData, len(chainsData))
-	for idx, chainData := range chainsData {
-		sch.ChainsData[idx] = ChainData{
-			ExtendedShardHeaderHashes: chainData.GetExtendedShardHeaderHashes(),
-			ChainID:                   chainData.GetChainID(),
+	for idx, chainDataHandler := range chainsData {
+		chainData, castOk := chainDataHandler.(*ChainData)
+		if !castOk {
+			return fmt.Errorf("%w in SetChainDataHandlers, idx: %d", data.ErrWrongTypeAssertion, idx)
 		}
+		if chainData == nil {
+			return fmt.Errorf("%w in SetChainDataHandlers, idx: %d", data.ErrNilPointerDereference, idx)
+		}
+
+		sch.ChainsData[idx] = *chainData
 	}
 
 	return nil
@@ -950,7 +955,7 @@ func (m *EpochStartSovereign) GetEconomicsHandler() data.EconomicsHandler {
 	return &m.Economics
 }
 
-// SetLastFinalizedHeaders sets epoch start data for main chains chain only
+// SetLastFinalizedHeaders sets epoch start data for multiple chains
 func (m *EpochStartSovereign) SetLastFinalizedHeaders(epochStartShardDataHandlers []data.EpochStartShardDataHandler) error {
 	if m == nil {
 		return data.ErrNilPointerReceiver
