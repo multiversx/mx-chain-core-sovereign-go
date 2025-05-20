@@ -65,7 +65,7 @@ func (hn *headersNotifier) NotifyHeaderSubscribers(header sovereign.IncomingHead
 		return err
 	}
 
-	log.Debug("notifying incoming header", "chain", header.GetSourceChainID(), "nonce", header, "hash", hex.EncodeToString(headerHash))
+	log.Debug("notifying incoming header", "chain", header.GetSourceChainID(), "nonce", header.GetNonce(), "hash", hex.EncodeToString(headerHash))
 
 	hn.mutSubscribers.RLock()
 	defer hn.mutSubscribers.RUnlock()
