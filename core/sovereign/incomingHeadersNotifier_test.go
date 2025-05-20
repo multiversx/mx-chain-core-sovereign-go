@@ -12,22 +12,8 @@ import (
 	"github.com/multiversx/mx-chain-core-go/data/sovereign"
 	"github.com/multiversx/mx-chain-core-go/data/sovereign/dto"
 	"github.com/multiversx/mx-chain-core-go/marshal"
+	testscommon "github.com/multiversx/mx-chain-core-go/testscommon/sovereign"
 )
-
-type mockHeaderSubscriber struct {
-	AddHeaderCalled func(hash []byte, header sovereign.IncomingHeaderHandler) error
-}
-
-func (m *mockHeaderSubscriber) AddHeader(hash []byte, header sovereign.IncomingHeaderHandler) error {
-	if m.AddHeaderCalled != nil {
-		return m.AddHeaderCalled(hash, header)
-	}
-	return nil
-}
-
-func (m *mockHeaderSubscriber) IsInterfaceNil() bool {
-	return m == nil
-}
 
 func TestNewHeadersNotifier(t *testing.T) {
 	t.Parallel()
@@ -65,8 +51,8 @@ func TestHeadersNotifier_RegisterSubscriber(t *testing.T) {
 
 	t.Run("multiple subscribers should work", func(t *testing.T) {
 		hn.subscribers = nil // Reset
-		sub1 := &mockHeaderSubscriber{}
-		sub2 := &mockHeaderSubscriber{}
+		sub1 := &testscommon.HeaderSubscriberMock{}
+		sub2 := &testscommon.HeaderSubscriberMock{}
 		err := hn.RegisterSubscriber(sub1)
 		require.NoError(t, err)
 		err = hn.RegisterSubscriber(sub2)
@@ -84,7 +70,7 @@ func TestHeadersNotifier_RegisterSubscriber(t *testing.T) {
 		for i := 0; i < numSubscribers; i++ {
 			go func() {
 				defer wg.Done()
-				err := hn.RegisterSubscriber(&mockHeaderSubscriber{})
+				err := hn.RegisterSubscriber(&testscommon.HeaderSubscriberMock{})
 				if err != nil {
 					t.Error(err)
 				}
@@ -120,7 +106,7 @@ func TestHeadersNotifier_NotifyHeaderSubscribers(t *testing.T) {
 	t.Run("subscribers called correctly", func(t *testing.T) {
 		hn.subscribers = nil // Reset
 		calledCount := 0
-		subscriber := &mockHeaderSubscriber{
+		subscriber := &testscommon.HeaderSubscriberMock{
 			AddHeaderCalled: func(hash []byte, h sovereign.IncomingHeaderHandler) error {
 				calledCount++
 				require.Equal(t, headerHash, hash)
@@ -140,7 +126,7 @@ func TestHeadersNotifier_NotifyHeaderSubscribers(t *testing.T) {
 	t.Run("subscriber error should log but not fail", func(t *testing.T) {
 		hn.subscribers = nil // Reset
 		expectedErr := errors.New("subscriber error")
-		subscriber := &mockHeaderSubscriber{
+		subscriber := &testscommon.HeaderSubscriberMock{
 			AddHeaderCalled: func(hash []byte, h sovereign.IncomingHeaderHandler) error {
 				return expectedErr
 			},
@@ -162,7 +148,7 @@ func TestHeadersNotifier_NotifyHeaderSubscribers(t *testing.T) {
 
 		go func() {
 			for i := 0; i < numSubscribers; i++ {
-				err := hn.RegisterSubscriber(&mockHeaderSubscriber{
+				err := hn.RegisterSubscriber(&testscommon.HeaderSubscriberMock{
 					AddHeaderCalled: func(hash []byte, h sovereign.IncomingHeaderHandler) error {
 						return nil
 					},
