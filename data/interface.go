@@ -99,7 +99,15 @@ type HeaderProofHandler interface {
 	GetHeaderShardId() uint32
 	GetHeaderRound() uint64
 	GetIsStartOfEpoch() bool
+	GetExtraSignatureHandlers() map[string]ExtraSignatureDataHandler
 	IsInterfaceNil() bool
+}
+
+// ExtraSignatureDataHandler defines an extra signature data handler
+type ExtraSignatureDataHandler interface {
+	GetSignatureShare() []byte
+	GetAggregatedSignature() []byte
+	GetLeaderSignature() []byte
 }
 
 // ValidatorStatisticsInfoHandler is a simple handler needed for validator statistics info
