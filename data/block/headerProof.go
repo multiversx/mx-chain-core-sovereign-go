@@ -26,3 +26,23 @@ func (x *HeaderProof) GetExtraSignatureHandlers() map[string]data.ExtraSignature
 
 	return extraSigHandlers
 }
+
+// SetLeaderSignature will set the leader sig
+func (x *ExtraSignatureData) SetLeaderSignature(leaderSig []byte) error {
+	if x == nil {
+		return data.ErrNilPointerReceiver
+	}
+
+	x.LeaderSignature = leaderSig
+	return nil
+}
+
+// SetAggregatedSignature will set the aggregated sig
+func (x *ExtraSignatureData) SetAggregatedSignature(aggregatedSig []byte) error {
+	if x == nil {
+		return data.ErrNilPointerReceiver
+	}
+
+	x.AggregatedSignature = aggregatedSig
+	return nil
+}

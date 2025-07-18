@@ -106,6 +106,9 @@ type HeaderProofHandler interface {
 // ExtraSignatureDataHandler defines an extra signature data handler
 type ExtraSignatureDataHandler interface {
 	GetAggregatedSignature() []byte
+	GetLeaderSignature() []byte
+	SetLeaderSignature(leaderSig []byte) error
+	SetAggregatedSignature(aggregatedSig []byte) error
 }
 
 // ValidatorStatisticsInfoHandler is a simple handler needed for validator statistics info
