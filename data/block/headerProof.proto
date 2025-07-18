@@ -22,7 +22,5 @@ message HeaderProof {
 }
 
 message ExtraSignatureData {
-  bytes SignatureShare  	  = 1;
   bytes AggregatedSignature = 2;
-  bytes LeaderSignature		  = 3;
 }
