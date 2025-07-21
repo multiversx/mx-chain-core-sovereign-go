@@ -46,3 +46,8 @@ func (x *ExtraSignatureData) SetAggregatedSignature(aggregatedSig []byte) error 
 	x.AggregatedSignature = aggregatedSig
 	return nil
 }
+
+// IsInterfaceNil checks if the underlying pointer is nil
+func (x *ExtraSignatureData) IsInterfaceNil() bool {
+	return x == nil
+}

@@ -109,6 +109,7 @@ type ExtraSignatureDataHandler interface {
 	GetLeaderSignature() []byte
 	SetLeaderSignature(leaderSig []byte) error
 	SetAggregatedSignature(aggregatedSig []byte) error
+	IsInterfaceNil() bool
 }
 
 // ValidatorStatisticsInfoHandler is a simple handler needed for validator statistics info
