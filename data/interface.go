@@ -94,6 +94,7 @@ type HeaderProofHandler interface {
 	GetPubKeysBitmap() []byte
 	GetAggregatedSignature() []byte
 	GetHeaderHash() []byte
+	GetProcessedHeaderHash() []byte
 	GetHeaderEpoch() uint32
 	GetHeaderNonce() uint64
 	GetHeaderShardId() uint32
