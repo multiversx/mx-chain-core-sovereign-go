@@ -89,6 +89,19 @@ type CommonHeaderHandler interface {
 	IsInterfaceNil() bool
 }
 
+// HeaderProofHandler defines getters and setters for the header proof
+type HeaderProofHandler interface {
+	GetPubKeysBitmap() []byte
+	GetAggregatedSignature() []byte
+	GetHeaderHash() []byte
+	GetHeaderEpoch() uint32
+	GetHeaderNonce() uint64
+	GetHeaderShardId() uint32
+	GetHeaderRound() uint64
+	GetIsStartOfEpoch() bool
+	IsInterfaceNil() bool
+}
+
 // ValidatorStatisticsInfoHandler is a simple handler needed for validator statistics info
 type ValidatorStatisticsInfoHandler interface {
 	SetValidatorStatsRootHash(rootHash []byte) error
