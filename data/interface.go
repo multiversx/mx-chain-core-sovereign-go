@@ -99,6 +99,16 @@ type HeaderProofHandler interface {
 	GetHeaderShardId() uint32
 	GetHeaderRound() uint64
 	GetIsStartOfEpoch() bool
+	GetExtraSignatureHandlers() map[string]ExtraSignatureDataHandler
+	IsInterfaceNil() bool
+}
+
+// ExtraSignatureDataHandler defines an extra signature data handler
+type ExtraSignatureDataHandler interface {
+	GetAggregatedSignature() []byte
+	GetLeaderSignature() []byte
+	SetLeaderSignature(leaderSig []byte) error
+	SetAggregatedSignature(aggregatedSig []byte) error
 	IsInterfaceNil() bool
 }
 
