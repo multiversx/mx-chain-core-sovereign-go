@@ -90,6 +90,30 @@ type CommonHeaderHandler interface {
 	IsInterfaceNil() bool
 }
 
+// HeaderProofHandler defines getters and setters for the header proof
+type HeaderProofHandler interface {
+	GetPubKeysBitmap() []byte
+	GetAggregatedSignature() []byte
+	GetHeaderHash() []byte
+	GetProcessedHeaderHash() []byte
+	GetHeaderEpoch() uint32
+	GetHeaderNonce() uint64
+	GetHeaderShardId() uint32
+	GetHeaderRound() uint64
+	GetIsStartOfEpoch() bool
+	GetExtraSignatureHandlers() map[string]ExtraSignatureDataHandler
+	IsInterfaceNil() bool
+}
+
+// ExtraSignatureDataHandler defines an extra signature data handler
+type ExtraSignatureDataHandler interface {
+	GetAggregatedSignature() []byte
+	GetLeaderSignature() []byte
+	SetLeaderSignature(leaderSig []byte) error
+	SetAggregatedSignature(aggregatedSig []byte) error
+	IsInterfaceNil() bool
+}
+
 // ValidatorStatisticsInfoHandler is a simple handler needed for validator statistics info
 type ValidatorStatisticsInfoHandler interface {
 	SetValidatorStatsRootHash(rootHash []byte) error
