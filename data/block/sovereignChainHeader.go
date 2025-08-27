@@ -632,6 +632,7 @@ func (sch *SovereignChainHeader) SetOutGoingMiniBlockHeaderHandler(mbHeader data
 
 func createOutGoingMbHeader(mbHeader data.OutGoingMiniBlockHeaderHandler) *OutGoingMiniBlockHeader {
 	return &OutGoingMiniBlockHeader{
+		ChainID:                               mbHeader.GetChainID(),
 		Type:                                  OutGoingMBType(mbHeader.GetOutGoingMBTypeInt32()),
 		Hash:                                  mbHeader.GetHash(),
 		OutGoingOperationsHash:                mbHeader.GetOutGoingOperationsHash(),
