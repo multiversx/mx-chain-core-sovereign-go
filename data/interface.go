@@ -4,6 +4,7 @@ import (
 	"math/big"
 
 	"github.com/multiversx/mx-chain-core-go/data/headerVersionData"
+	"github.com/multiversx/mx-chain-core-go/data/sovereign/dto"
 )
 
 // TriggerRegistryHandler defines getters and setters for the trigger registry
@@ -526,8 +527,11 @@ type UserAccountHandler interface {
 // ShardHeaderExtendedHandler extends ShardHeaderHandler interface, by also including incoming mini blocks needed by sovereign chain
 type ShardHeaderExtendedHandler interface {
 	ShardHeaderHandler
+	GetProof() []byte
+	GetSourceChainID() dto.ChainID
 	GetIncomingMiniBlockHandlers() []MiniBlockHandler
 	SetIncomingMiniBlockHandlers(miniBlockHandlers []MiniBlockHandler) error
 	GetHeaderHandler() HeaderHandler
 	GetIncomingEventHandlers() []EventHandler
+	SetIncomingEventHandlers(events []EventHandler) error
 }

@@ -8,6 +8,7 @@ import (
 	"github.com/multiversx/mx-chain-core-go/core/check"
 	"github.com/multiversx/mx-chain-core-go/data"
 	"github.com/multiversx/mx-chain-core-go/data/headerVersionData"
+	"github.com/multiversx/mx-chain-core-go/data/transaction"
 )
 
 // GetShardID returns the header shardID
@@ -904,6 +905,35 @@ func (she *ShardHeaderExtended) GetIncomingEventHandlers() []data.EventHandler {
 	}
 
 	return logHandlers
+}
+
+// SetIncomingEventHandlers sets incoming events
+func (she *ShardHeaderExtended) SetIncomingEventHandlers(events []data.EventHandler) error {
+	if she == nil {
+		return data.ErrNilPointerReceiver
+	}
+
+	if len(events) == 0 {
+		she.IncomingEvents = make([]*transaction.Event, 0)
+		return nil
+	}
+
+	incomingEvents := make([]*transaction.Event, len(events))
+	for idx, event := range events {
+		eventData, castOk := event.(*transaction.Event)
+		if !castOk {
+			return fmt.Errorf("%w in ShardHeaderExtended.SetIncomingEventHandlers", data.ErrWrongTypeAssertion)
+		}
+		if eventData == nil {
+			return fmt.Errorf("%w in ShardHeaderExtended.SetIncomingEventHandlers", data.ErrNilPointerDereference)
+		}
+
+		eventClone := *eventData
+		incomingEvents[idx] = &eventClone
+	}
+
+	she.IncomingEvents = incomingEvents
+	return nil
 }
 
 // GetHeaderHandler returns the incoming headerV2 as a header handler
