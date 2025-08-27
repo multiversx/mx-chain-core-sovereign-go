@@ -8,9 +8,11 @@ option (gogoproto.stable_marshaler_all) = true;
 import "github.com/gogo/protobuf/gogoproto/gogo.proto";
 
 enum ChainID {
-  MVX = 0;
-  ETH = 1;
-  SUI = 2;
+  UNSPECIFIED = 0;
 
-  ALL_CHAINS = 100;
+  MVX = 100;
+  ETH = 101;
+  SUI = 103;
+
+  ALL_CHAINS = 999;
 };
