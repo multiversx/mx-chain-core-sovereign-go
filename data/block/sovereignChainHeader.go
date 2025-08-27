@@ -607,7 +607,7 @@ func (sch *SovereignChainHeader) GetOutGoingMiniBlockHeaderHandlerToChain(mbType
 	return nil
 }
 
-// SetOutGoingMiniBlockHeaderHandler replaces the outgoing mb based on its type, if found.
+// SetOutGoingMiniBlockHeaderHandler replaces the outgoing mb based on its type and chain, if found.
 // Otherwise, it adds it add the end of the slice.
 func (sch *SovereignChainHeader) SetOutGoingMiniBlockHeaderHandler(mbHeader data.OutGoingMiniBlockHeaderHandler) error {
 	if sch == nil {
@@ -620,7 +620,7 @@ func (sch *SovereignChainHeader) SetOutGoingMiniBlockHeaderHandler(mbHeader data
 
 	outGoingMbHdr := createOutGoingMbHeader(mbHeader)
 	for idx, currOutGoingMbHdr := range sch.OutGoingMiniBlockHeaders {
-		if int32(currOutGoingMbHdr.Type) == mbHeader.GetOutGoingMBTypeInt32() {
+		if int32(currOutGoingMbHdr.Type) == mbHeader.GetOutGoingMBTypeInt32() && currOutGoingMbHdr.ChainID == mbHeader.GetChainID() {
 			sch.OutGoingMiniBlockHeaders[idx] = outGoingMbHdr
 			return nil
 		}
