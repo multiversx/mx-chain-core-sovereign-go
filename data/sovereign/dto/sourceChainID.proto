@@ -11,4 +11,6 @@ enum ChainID {
   MVX = 0;
   ETH = 1;
   SUI = 2;
+
+  ALL_CHAINS = 100;
 };
