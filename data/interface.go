@@ -133,6 +133,7 @@ type SovereignChainHeaderHandler interface {
 	SetOutGoingMiniBlockHeaderHandlers(mbHeader []OutGoingMiniBlockHeaderHandler) error
 	GetOutGoingMiniBlockHeaderHandler(mbType int32) OutGoingMiniBlockHeaderHandler
 	SetOutGoingMiniBlockHeaderHandler(mbHeader OutGoingMiniBlockHeaderHandler) error
+	GetOutGoingMiniBlockHeaderHandlerToChain(mbType int32, chainID dto.ChainID) OutGoingMiniBlockHeaderHandler
 	GetDevFeesInEpoch() *big.Int
 	SetDevFeesInEpoch(value *big.Int) error
 	GetAccumulatedFeesInEpoch() *big.Int
