@@ -156,21 +156,28 @@ func TestSovereignChainHeader_GetOutGoingMiniBlockHeaderHandler(t *testing.T) {
 	sovHdr := &SovereignChainHeader{
 		OutGoingMiniBlockHeaders: []*OutGoingMiniBlockHeader{
 			{
-				Type: OutGoingMbTx,
-				Hash: []byte("h1"),
+				ChainID: dto.MVX,
+				Type:    OutGoingMbTx,
+				Hash:    []byte("h1"),
 			},
 			{
-				Type: OutGoingMbChangeValidatorSet,
-				Hash: []byte("h2"),
+				ChainID: dto.ETH,
+				Type:    OutGoingMbTx,
+				Hash:    []byte("h2"),
+			},
+			{
+				ChainID: dto.MVX,
+				Type:    OutGoingMbChangeValidatorSet,
+				Hash:    []byte("h3"),
 			},
 		},
 	}
 
-	mb := sovHdr.GetOutGoingMiniBlockHeaderHandler(int32(OutGoingMbTx))
-	require.Equal(t, sovHdr.OutGoingMiniBlockHeaders[0], mb)
-	mb = sovHdr.GetOutGoingMiniBlockHeaderHandler(int32(OutGoingMbChangeValidatorSet))
-	require.Equal(t, sovHdr.OutGoingMiniBlockHeaders[1], mb)
-	require.Nil(t, sovHdr.GetOutGoingMiniBlockHeaderHandler(-1))
+	mbs := sovHdr.GetOutGoingMiniBlockHeaderHandlersWithType(int32(OutGoingMbTx))
+	require.Equal(t, []data.OutGoingMiniBlockHeaderHandler{sovHdr.OutGoingMiniBlockHeaders[0], sovHdr.OutGoingMiniBlockHeaders[1]}, mbs)
+	mbs = sovHdr.GetOutGoingMiniBlockHeaderHandlersWithType(int32(OutGoingMbChangeValidatorSet))
+	require.Equal(t, []data.OutGoingMiniBlockHeaderHandler{sovHdr.OutGoingMiniBlockHeaders[2]}, mbs)
+	require.Empty(t, sovHdr.GetOutGoingMiniBlockHeaderHandlersWithType(-1))
 }
 
 func TestSovereignChainHeader_SetOutGoingMiniBlockHeaderHandlers(t *testing.T) {
