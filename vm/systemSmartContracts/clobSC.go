@@ -3,6 +3,7 @@ package systemSmartContracts
 import (
 	"encoding/json"
 
+	vmcommon "github.com/multiversx/mx-chain-vm-common-go"
 	"github.com/nikolaydubina/fpdecimal"
 )
 
@@ -15,22 +16,15 @@ const (
 
 const orderBookStorageKey = "orderBook"
 
-// EEI is a temporary interface definition based on user guidance.
-// I expect this to be replaced by the actual EEI interface from the project.
-type EEI interface {
-	GetStorage(key []byte) ([]byte, error)
-	SetStorage(key []byte, value []byte) error
-}
-
 // clobSC is the system smart contract for the Central Limit Order Book.
 type clobSC struct {
-	eei EEI
+	storage vmcommon.AccountDataHandler
 }
 
 // NewClobSC creates a new instance of the CLOB system smart contract.
-func NewClobSC(eei EEI) *clobSC {
+func NewClobSC(storage vmcommon.AccountDataHandler) *clobSC {
 	return &clobSC{
-		eei: eei,
+		storage: storage,
 	}
 }
 
@@ -46,7 +40,7 @@ func (sc *clobSC) ProcessOrder(
 	clob := NewCLOB()
 
 	// Load state from storage
-	data, err := sc.eei.GetStorage([]byte(orderBookStorageKey))
+	data, _, err := sc.storage.RetrieveValue([]byte(orderBookStorageKey))
 	if err != nil {
 		return nil, err
 	}
@@ -66,7 +60,7 @@ func (sc *clobSC) ProcessOrder(
 	if err != nil {
 		return nil, err
 	}
-	err = sc.eei.SetStorage([]byte(orderBookStorageKey), newState)
+	err = sc.storage.SaveKeyValue([]byte(orderBookStorageKey), newState)
 	if err != nil {
 		return nil, err
 	}
@@ -79,7 +73,7 @@ func (sc *clobSC) CancelOrder(orderID string) ([]byte, error) {
 	clob := NewCLOB()
 
 	// Load state from storage
-	data, err := sc.eei.GetStorage([]byte(orderBookStorageKey))
+	data, _, err := sc.storage.RetrieveValue([]byte(orderBookStorageKey))
 	if err != nil {
 		return nil, err
 	}
@@ -96,7 +90,7 @@ func (sc *clobSC) CancelOrder(orderID string) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	err = sc.eei.SetStorage([]byte(orderBookStorageKey), newState)
+	err = sc.storage.SaveKeyValue([]byte(orderBookStorageKey), newState)
 	if err != nil {
 		return nil, err
 	}
@@ -109,7 +103,7 @@ func (sc *clobSC) GetOrder(orderID string) ([]byte, error) {
 	clob := NewCLOB()
 
 	// Load state from storage
-	data, err := sc.eei.GetStorage([]byte(orderBookStorageKey))
+	data, _, err := sc.storage.RetrieveValue([]byte(orderBookStorageKey))
 	if err != nil {
 		return nil, err
 	}
@@ -129,7 +123,7 @@ func (sc *clobSC) GetDepth() ([]byte, error) {
 	clob := NewCLOB()
 
 	// Load state from storage
-	data, err := sc.eei.GetStorage([]byte(orderBookStorageKey))
+	data, _, err := sc.storage.RetrieveValue([]byte(orderBookStorageKey))
 	if err != nil {
 		return nil, err
 	}

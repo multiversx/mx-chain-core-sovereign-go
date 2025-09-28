@@ -4,33 +4,41 @@ import (
 	"encoding/json"
 	"testing"
 
+	vmcommon "github.com/multiversx/mx-chain-vm-common-go"
 	"github.com/nikolaydubina/fpdecimal"
 	"github.com/stretchr/testify/assert"
 )
 
-// mockEEI implements the EEI interface for testing.
-type mockEEI struct {
+// mockAccountDataHandler implements the vmcommon.AccountDataHandler interface for testing.
+type mockAccountDataHandler struct {
 	storage map[string][]byte
 }
 
-func newMockEEI() *mockEEI {
-	return &mockEEI{
+func newMockAccountDataHandler() *mockAccountDataHandler {
+	return &mockAccountDataHandler{
 		storage: make(map[string][]byte),
 	}
 }
 
-func (m *mockEEI) GetStorage(key []byte) ([]byte, error) {
-	return m.storage[string(key)], nil
+func (m *mockAccountDataHandler) RetrieveValue(key []byte) ([]byte, uint32, error) {
+	return m.storage[string(key)], 0, nil
 }
 
-func (m *mockEEI) SetStorage(key, value []byte) error {
+func (m *mockAccountDataHandler) SaveKeyValue(key, value []byte) error {
 	m.storage[string(key)] = value
 	return nil
 }
 
+func (m *mockAccountDataHandler) MigrateDataTrieLeaves(args vmcommon.ArgsMigrateDataTrieLeaves) error {
+	return nil
+}
+func (m *mockAccountDataHandler) IsInterfaceNil() bool {
+	return false
+}
+
 func TestClobSC_ProcessOrder(t *testing.T) {
-	eei := newMockEEI()
-	sc := NewClobSC(eei)
+	storage := newMockAccountDataHandler()
+	sc := NewClobSC(storage)
 
 	// Process a limit order
 	doneBytes, err := sc.ProcessOrder(
@@ -52,12 +60,12 @@ func TestClobSC_ProcessOrder(t *testing.T) {
 	assert.True(t, done.Stored)
 
 	// Check that the state was updated
-	assert.NotEmpty(t, eei.storage[orderBookStorageKey])
+	assert.NotEmpty(t, storage.storage[orderBookStorageKey])
 }
 
 func TestClobSC_FullFlow(t *testing.T) {
-	eei := newMockEEI()
-	sc := NewClobSC(eei)
+	storage := newMockAccountDataHandler()
+	sc := NewClobSC(storage)
 
 	// 1. Process a limit order
 	_, err := sc.ProcessOrder(
