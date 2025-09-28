@@ -326,6 +326,9 @@ const BuiltInCostString = "BuiltInCost"
 // ESDTSCAddress is the hard-coded address for esdt issuing smart contract
 var ESDTSCAddress = []byte{0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 255, 255}
 
+// CLOBSCAddress is the hard-coded address for the central limit order book smart contract
+var CLOBSCAddress = []byte{0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 255, 255}
+
 // SCDeployIdentifier is the identifier for a smart contract deploy
 const SCDeployIdentifier = "SCDeploy"
 
