@@ -9,6 +9,7 @@ import (
 	"github.com/multiversx/mx-chain-core-go/core/check"
 	"github.com/multiversx/mx-chain-core-go/data"
 	"github.com/multiversx/mx-chain-core-go/data/headerVersionData"
+	"github.com/multiversx/mx-chain-core-go/data/sovereign/dto"
 )
 
 // GetAdditionalData returns nil for the sovereign chain header
@@ -591,7 +592,22 @@ func (sch *SovereignChainHeader) GetOutGoingMiniBlockHeaderHandler(mbType int32)
 	return nil
 }
 
-// SetOutGoingMiniBlockHeaderHandler replaces the outgoing mb based on its type, if found.
+// GetOutGoingMiniBlockHeaderHandlerToChain returns the outgoing mb header handler with specified type and chain id
+func (sch *SovereignChainHeader) GetOutGoingMiniBlockHeaderHandlerToChain(mbType int32, chainID dto.ChainID) data.OutGoingMiniBlockHeaderHandler {
+	if sch == nil {
+		return nil
+	}
+
+	for _, outGoingMbHdr := range sch.OutGoingMiniBlockHeaders {
+		if int32(outGoingMbHdr.Type) == mbType && outGoingMbHdr.ChainID == chainID {
+			return outGoingMbHdr
+		}
+	}
+
+	return nil
+}
+
+// SetOutGoingMiniBlockHeaderHandler replaces the outgoing mb based on its type and chain, if found.
 // Otherwise, it adds it add the end of the slice.
 func (sch *SovereignChainHeader) SetOutGoingMiniBlockHeaderHandler(mbHeader data.OutGoingMiniBlockHeaderHandler) error {
 	if sch == nil {
@@ -604,7 +620,7 @@ func (sch *SovereignChainHeader) SetOutGoingMiniBlockHeaderHandler(mbHeader data
 
 	outGoingMbHdr := createOutGoingMbHeader(mbHeader)
 	for idx, currOutGoingMbHdr := range sch.OutGoingMiniBlockHeaders {
-		if int32(currOutGoingMbHdr.Type) == mbHeader.GetOutGoingMBTypeInt32() {
+		if int32(currOutGoingMbHdr.Type) == mbHeader.GetOutGoingMBTypeInt32() && currOutGoingMbHdr.ChainID == mbHeader.GetChainID() {
 			sch.OutGoingMiniBlockHeaders[idx] = outGoingMbHdr
 			return nil
 		}
@@ -616,6 +632,7 @@ func (sch *SovereignChainHeader) SetOutGoingMiniBlockHeaderHandler(mbHeader data
 
 func createOutGoingMbHeader(mbHeader data.OutGoingMiniBlockHeaderHandler) *OutGoingMiniBlockHeader {
 	return &OutGoingMiniBlockHeader{
+		ChainID:                               mbHeader.GetChainID(),
 		Type:                                  OutGoingMBType(mbHeader.GetOutGoingMBTypeInt32()),
 		Hash:                                  mbHeader.GetHash(),
 		OutGoingOperationsHash:                mbHeader.GetOutGoingOperationsHash(),
@@ -806,6 +823,16 @@ func (omb *OutGoingMiniBlockHeader) SetOutGoingMBTypeInt32(mbType int32) error {
 	}
 
 	omb.Type = OutGoingMBType(mbType)
+	return nil
+}
+
+// SetChainID sets the chain id
+func (omb *OutGoingMiniBlockHeader) SetChainID(chainID dto.ChainID) error {
+	if omb == nil {
+		return data.ErrNilPointerReceiver
+	}
+
+	omb.ChainID = chainID
 	return nil
 }
 
