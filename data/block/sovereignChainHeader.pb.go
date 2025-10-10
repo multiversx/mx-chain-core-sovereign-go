@@ -171,6 +171,7 @@ func (m *EpochStartCrossChainData) GetHeaderHash() []byte {
 	return nil
 }
 
+// ChainData holds chain data notarized info
 type ChainData struct {
 	ChainID                   dto.ChainID `protobuf:"varint,1,opt,name=ChainID,proto3,enum=proto.ChainID" json:"chainID"`
 	ExtendedShardHeaderHashes [][]byte    `protobuf:"bytes,2,rep,name=ExtendedShardHeaderHashes,proto3" json:"extendedShardHeaderHashes,omitempty"`
