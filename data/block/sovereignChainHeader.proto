@@ -26,6 +26,7 @@ message EpochStartCrossChainData {
   bytes                         HeaderHash               = 2 [(gogoproto.jsontag) = "headerHash,omitempty"];
 }
 
+// ChainData holds chain data notarized info
 message ChainData {
   ChainID ChainID                          = 1 [(gogoproto.jsontag) = "chainID"];
   repeated bytes ExtendedShardHeaderHashes = 2 [(gogoproto.jsontag) = "extendedShardHeaderHashes,omitempty"];
@@ -44,8 +45,11 @@ message SovereignChainHeader {
 }
 
 enum OutGoingMBType {
-  OutGoingMbTx = 0;
+  OutGoingMbDeposit = 0;
   OutGoingMbChangeValidatorSet = 30;
+  OutGoingMBRegisterToken = 60;
+  OutGoingMBRegisterBlsKey = 90;
+  OutGoingMBUnRegisterBlsKey = 120;
 };
 
 message OutGoingMiniBlockHeader {
@@ -55,5 +59,4 @@ message OutGoingMiniBlockHeader {
   bytes          OutGoingOperationsHash                = 4 [(gogoproto.jsontag) = "outGoingOperationsHash,omitempty"];
   bytes          AggregatedSignatureOutGoingOperations = 5 [(gogoproto.jsontag) = "aggregatedSignatureOutGoingOperations,omitempty"];
   bytes          LeaderSignatureOutGoingOperations     = 6 [(gogoproto.jsontag) = "leaderSignatureOutGoingOperations,omitempty"];
-
 }
