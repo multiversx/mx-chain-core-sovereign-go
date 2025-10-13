@@ -127,8 +127,8 @@ type SovereignChainHeaderHandler interface {
 	GetMiniBlockHeadersWithDst(destId uint32) map[string]uint32
 	SetValidatorStatsRootHash(rootHash []byte) error
 	GetValidatorStatsRootHash() []byte
-	SetExtendedShardHeaderHashes(hdrHashes [][]byte) error
-	GetExtendedShardHeaderHashes() [][]byte
+	GetChainDataHandlers() []ChainDataHandler
+	SetChainDataHandlers(chainsData []ChainDataHandler) error
 	GetOutGoingMiniBlockHeaderHandlers() []OutGoingMiniBlockHeaderHandler
 	SetOutGoingMiniBlockHeaderHandlers(mbHeader []OutGoingMiniBlockHeaderHandler) error
 	GetOutGoingMiniBlockHeaderHandler(mbType int32) OutGoingMiniBlockHeaderHandler
@@ -142,8 +142,6 @@ type SovereignChainHeaderHandler interface {
 	GetEpochStartHandler() EpochStartHandler
 	GetShardInfoHandlers() []ShardDataHandler
 	SetShardInfoHandlers(shardInfo []ShardDataHandler) error
-	GetLastFinalizedCrossChainHeaderHandler() EpochStartChainDataHandler
-	SetLastFinalizedCrossChainHeaderHandler(crossChainData EpochStartChainDataHandler) error
 }
 
 // OutGoingMiniBlockHeaderHandler defines setters and getters for sovereign outgoing mini block header
@@ -163,6 +161,14 @@ type OutGoingMiniBlockHeaderHandler interface {
 	SetOutGoingMBTypeInt32(mbType int32) error
 
 	IsInterfaceNil() bool
+}
+
+// ChainDataHandler defines getters and setters for chain data handler
+type ChainDataHandler interface {
+	GetChainID() dto.ChainID
+	SetChainID(chainID dto.ChainID) error
+	GetExtendedShardHeaderHashes() [][]byte
+	SetExtendedShardHeaderHashes(hdrHashes [][]byte) error
 }
 
 // HeaderHandler defines getters and setters for header data holder

@@ -6,8 +6,8 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"github.com/multiversx/mx-chain-core-go/core"
 	"github.com/multiversx/mx-chain-core-go/data"
+	"github.com/multiversx/mx-chain-core-go/data/sovereign/dto"
 )
 
 func TestSovereignChainHeader_GetEpochStartHandler(t *testing.T) {
@@ -17,11 +17,12 @@ func TestSovereignChainHeader_GetEpochStartHandler(t *testing.T) {
 		NodePrice: big.NewInt(100),
 	}
 	epochStartData := EpochStartCrossChainData{
-		Round: 4,
+		ShardID: uint32(dto.ETH),
+		Round:   4,
 	}
 	epochStartSov := EpochStartSovereign{
 		Economics:                     economics,
-		LastFinalizedCrossChainHeader: epochStartData,
+		LastFinalizedCrossChainHeader: []EpochStartCrossChainData{epochStartData},
 	}
 	sovHdr := &SovereignChainHeader{
 		EpochStart: epochStartSov,
@@ -29,20 +30,22 @@ func TestSovereignChainHeader_GetEpochStartHandler(t *testing.T) {
 
 	require.Equal(t, &epochStartSov, sovHdr.GetEpochStartHandler())
 	require.Equal(t, &economics, sovHdr.GetEpochStartHandler().GetEconomicsHandler())
-	require.Empty(t, sovHdr.GetEpochStartHandler().GetLastFinalizedHeaderHandlers())
+	require.Equal(t, []data.EpochStartShardDataHandler{&epochStartData}, sovHdr.GetEpochStartHandler().GetLastFinalizedHeaderHandlers())
 
-	epochStartData.ShardID = 8
+	epochStartData.ShardID = uint32(dto.MVX)
+	epochStartSov.LastFinalizedCrossChainHeader = []EpochStartCrossChainData{epochStartData}
 	err := sovHdr.GetEpochStartHandler().SetLastFinalizedHeaders([]data.EpochStartShardDataHandler{&epochStartData})
 	require.Nil(t, err)
-	require.Empty(t, sovHdr.GetEpochStartHandler().GetLastFinalizedHeaderHandlers())
-
-	epochStartData.ShardID = core.MainChainShardId
-	epochStartSov.LastFinalizedCrossChainHeader = epochStartData
-	err = sovHdr.GetEpochStartHandler().SetLastFinalizedHeaders([]data.EpochStartShardDataHandler{&epochStartData})
-	require.Nil(t, err)
-
 	require.Equal(t, []data.EpochStartShardDataHandler{&epochStartData}, sovHdr.GetEpochStartHandler().GetLastFinalizedHeaderHandlers())
 	require.Equal(t, &epochStartSov, sovHdr.GetEpochStartHandler())
+
+	epochStartData2 := EpochStartCrossChainData{
+		ShardID: uint32(dto.SUI),
+		Round:   5,
+	}
+	err = sovHdr.GetEpochStartHandler().SetLastFinalizedHeaders([]data.EpochStartShardDataHandler{&epochStartData, &epochStartData2})
+	require.Nil(t, err)
+	require.Equal(t, []data.EpochStartShardDataHandler{&epochStartData, &epochStartData2}, sovHdr.GetEpochStartHandler().GetLastFinalizedHeaderHandlers())
 }
 
 func TestSovereignChainHeader_GetEconomicsHandler(t *testing.T) {
