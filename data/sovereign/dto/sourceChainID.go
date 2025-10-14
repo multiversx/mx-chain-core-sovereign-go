@@ -6,12 +6,14 @@ package dto
 var ValidChains = map[ChainID]struct{}{
 	MVX: {},
 	ETH: {},
+	SUI: {},
 }
 
 // ValidChainNames defines supported cross chain id names
 var ValidChainNames = map[string]struct{}{
 	MVX.String(): {},
 	ETH.String(): {},
+	SUI.String(): {},
 }
 
 // IsValidCrossChainID returns true if the provided chain id is supported
