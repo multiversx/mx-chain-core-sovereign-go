@@ -4,6 +4,7 @@ import (
 	"math/big"
 
 	"github.com/multiversx/mx-chain-core-go/data/headerVersionData"
+	"github.com/multiversx/mx-chain-core-go/data/sovereign/dto"
 )
 
 // TriggerRegistryHandler defines getters and setters for the trigger registry
@@ -126,12 +127,13 @@ type SovereignChainHeaderHandler interface {
 	GetMiniBlockHeadersWithDst(destId uint32) map[string]uint32
 	SetValidatorStatsRootHash(rootHash []byte) error
 	GetValidatorStatsRootHash() []byte
-	SetExtendedShardHeaderHashes(hdrHashes [][]byte) error
-	GetExtendedShardHeaderHashes() [][]byte
+	GetChainDataHandlers() []ChainDataHandler
+	SetChainDataHandlers(chainsData []ChainDataHandler) error
 	GetOutGoingMiniBlockHeaderHandlers() []OutGoingMiniBlockHeaderHandler
 	SetOutGoingMiniBlockHeaderHandlers(mbHeader []OutGoingMiniBlockHeaderHandler) error
-	GetOutGoingMiniBlockHeaderHandler(mbType int32) OutGoingMiniBlockHeaderHandler
+	GetOutGoingMiniBlockHeaderHandlersWithType(mbType int32) []OutGoingMiniBlockHeaderHandler
 	SetOutGoingMiniBlockHeaderHandler(mbHeader OutGoingMiniBlockHeaderHandler) error
+	GetOutGoingMiniBlockHeaderHandlerToChain(mbType int32, chainID dto.ChainID) OutGoingMiniBlockHeaderHandler
 	GetDevFeesInEpoch() *big.Int
 	SetDevFeesInEpoch(value *big.Int) error
 	GetAccumulatedFeesInEpoch() *big.Int
@@ -140,25 +142,33 @@ type SovereignChainHeaderHandler interface {
 	GetEpochStartHandler() EpochStartHandler
 	GetShardInfoHandlers() []ShardDataHandler
 	SetShardInfoHandlers(shardInfo []ShardDataHandler) error
-	GetLastFinalizedCrossChainHeaderHandler() EpochStartChainDataHandler
-	SetLastFinalizedCrossChainHeaderHandler(crossChainData EpochStartChainDataHandler) error
 }
 
 // OutGoingMiniBlockHeaderHandler defines setters and getters for sovereign outgoing mini block header
 type OutGoingMiniBlockHeaderHandler interface {
 	GetHash() []byte
 	GetOutGoingOperationsHash() []byte
+	GetChainID() dto.ChainID
 	GetAggregatedSignatureOutGoingOperations() []byte
 	GetLeaderSignatureOutGoingOperations() []byte
 	GetOutGoingMBTypeInt32() int32
 
 	SetHash(hash []byte) error
 	SetOutGoingOperationsHash(hash []byte) error
+	SetChainID(chainID dto.ChainID) error
 	SetLeaderSignatureOutGoingOperations(sig []byte) error
 	SetAggregatedSignatureOutGoingOperations(sig []byte) error
 	SetOutGoingMBTypeInt32(mbType int32) error
 
 	IsInterfaceNil() bool
+}
+
+// ChainDataHandler defines getters and setters for chain data handler
+type ChainDataHandler interface {
+	GetChainID() dto.ChainID
+	SetChainID(chainID dto.ChainID) error
+	GetExtendedShardHeaderHashes() [][]byte
+	SetExtendedShardHeaderHashes(hdrHashes [][]byte) error
 }
 
 // HeaderHandler defines getters and setters for header data holder
@@ -526,8 +536,11 @@ type UserAccountHandler interface {
 // ShardHeaderExtendedHandler extends ShardHeaderHandler interface, by also including incoming mini blocks needed by sovereign chain
 type ShardHeaderExtendedHandler interface {
 	ShardHeaderHandler
+	GetProof() []byte
+	GetSourceChainID() dto.ChainID
 	GetIncomingMiniBlockHandlers() []MiniBlockHandler
 	SetIncomingMiniBlockHandlers(miniBlockHandlers []MiniBlockHandler) error
 	GetHeaderHandler() HeaderHandler
 	GetIncomingEventHandlers() []EventHandler
+	SetIncomingEventHandlers(events []EventHandler) error
 }

@@ -9,11 +9,12 @@ option (gogoproto.stable_marshaler_all) = true;
 import "github.com/gogo/protobuf/gogoproto/gogo.proto";
 import "block.proto";
 import "metaBlock.proto";
+import "github.com/multiversx/mx-chain-core-sovereign-go/data/sovereign/dto/sourceChainID.proto";
 
 // EpochStart holds the block information for end-of-epoch
 message EpochStartSovereign {
-  Economics                Economics                     = 1 [(gogoproto.jsontag) = "economics", (gogoproto.nullable) = false];
-  EpochStartCrossChainData LastFinalizedCrossChainHeader = 2 [(gogoproto.jsontag) = "lastFinalizedCrossChainHeader", (gogoproto.nullable) = false];
+  Economics                         Economics                     = 1 [(gogoproto.jsontag) = "economics", (gogoproto.nullable) = false];
+  repeated EpochStartCrossChainData LastFinalizedCrossChainHeader = 2 [(gogoproto.jsontag) = "lastFinalizedCrossChainHeader", (gogoproto.nullable) = false];
 }
 
 // EpochStartShardData hold the last finalized headers hash and state root hash
@@ -25,11 +26,17 @@ message EpochStartCrossChainData {
   bytes                         HeaderHash               = 2 [(gogoproto.jsontag) = "headerHash,omitempty"];
 }
 
+// ChainData holds chain data notarized info
+message ChainData {
+  ChainID ChainID                          = 1 [(gogoproto.jsontag) = "chainID"];
+  repeated bytes ExtendedShardHeaderHashes = 2 [(gogoproto.jsontag) = "extendedShardHeaderHashes,omitempty"];
+}
+
 // SovereignChainHeader extends the Header structure with extra fields needed by sovereign chain
 message SovereignChainHeader {
   Header                           Header                    = 1 [(gogoproto.jsontag) = "header"];
   bytes                            ValidatorStatsRootHash    = 2 [(gogoproto.jsontag) = "validatorStatsRootHash"];
-  repeated bytes                   ExtendedShardHeaderHashes = 3 [(gogoproto.jsontag) = "extendedShardHeaderHashes,omitempty"];
+  repeated ChainData               ChainsData                = 3 [(gogoproto.jsontag) = "chainsData,omitempty", (gogoproto.nullable) = false];
   repeated OutGoingMiniBlockHeader OutGoingMiniBlockHeaders  = 4 [(gogoproto.jsontag) = "outGoingOperations,omitempty"];
   bool                             IsStartOfEpoch            = 5 [(gogoproto.jsontag) = "isStartOfEpoch,omitempty"];
   bytes                            AccumulatedFeesInEpoch    = 6 [(gogoproto.jsontag) = "accumulatedFeesInEpoch,omitempty", (gogoproto.casttypewith) = "math/big.Int;github.com/multiversx/mx-chain-core-go/data.BigIntCaster"];
@@ -48,8 +55,8 @@ enum OutGoingMBType {
 message OutGoingMiniBlockHeader {
   OutGoingMBType Type                                  = 1 [(gogoproto.jsontag) = "type,omitempty"];
   bytes          Hash                                  = 2 [(gogoproto.jsontag) = "hash,omitempty"];
-  bytes          OutGoingOperationsHash                = 3 [(gogoproto.jsontag) = "outGoingOperationsHash,omitempty"];
-  bytes          AggregatedSignatureOutGoingOperations = 4 [(gogoproto.jsontag) = "aggregatedSignatureOutGoingOperations,omitempty"];
-  bytes          LeaderSignatureOutGoingOperations     = 5 [(gogoproto.jsontag) = "leaderSignatureOutGoingOperations,omitempty"];
-
+  ChainID        ChainID                               = 3 [(gogoproto.jsontag) = "chainID"];
+  bytes          OutGoingOperationsHash                = 4 [(gogoproto.jsontag) = "outGoingOperationsHash,omitempty"];
+  bytes          AggregatedSignatureOutGoingOperations = 5 [(gogoproto.jsontag) = "aggregatedSignatureOutGoingOperations,omitempty"];
+  bytes          LeaderSignatureOutGoingOperations     = 6 [(gogoproto.jsontag) = "leaderSignatureOutGoingOperations,omitempty"];
 }

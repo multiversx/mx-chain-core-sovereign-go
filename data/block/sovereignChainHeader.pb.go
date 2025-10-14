@@ -9,6 +9,7 @@ import (
 	_ "github.com/gogo/protobuf/gogoproto"
 	proto "github.com/gogo/protobuf/proto"
 	github_com_multiversx_mx_chain_core_go_data "github.com/multiversx/mx-chain-core-go/data"
+	dto "github.com/multiversx/mx-chain-core-go/data/sovereign/dto"
 	io "io"
 	math "math"
 	math_big "math/big"
@@ -61,8 +62,8 @@ func (OutGoingMBType) EnumDescriptor() ([]byte, []int) {
 
 // EpochStart holds the block information for end-of-epoch
 type EpochStartSovereign struct {
-	Economics                     Economics                `protobuf:"bytes,1,opt,name=Economics,proto3" json:"economics"`
-	LastFinalizedCrossChainHeader EpochStartCrossChainData `protobuf:"bytes,2,opt,name=LastFinalizedCrossChainHeader,proto3" json:"lastFinalizedCrossChainHeader"`
+	Economics                     Economics                  `protobuf:"bytes,1,opt,name=Economics,proto3" json:"economics"`
+	LastFinalizedCrossChainHeader []EpochStartCrossChainData `protobuf:"bytes,2,rep,name=LastFinalizedCrossChainHeader,proto3" json:"lastFinalizedCrossChainHeader"`
 }
 
 func (m *EpochStartSovereign) Reset()      { *m = EpochStartSovereign{} }
@@ -100,11 +101,11 @@ func (m *EpochStartSovereign) GetEconomics() Economics {
 	return Economics{}
 }
 
-func (m *EpochStartSovereign) GetLastFinalizedCrossChainHeader() EpochStartCrossChainData {
+func (m *EpochStartSovereign) GetLastFinalizedCrossChainHeader() []EpochStartCrossChainData {
 	if m != nil {
 		return m.LastFinalizedCrossChainHeader
 	}
-	return EpochStartCrossChainData{}
+	return nil
 }
 
 // EpochStartShardData hold the last finalized headers hash and state root hash
@@ -179,22 +180,70 @@ func (m *EpochStartCrossChainData) GetHeaderHash() []byte {
 	return nil
 }
 
+// ChainData holds chain data notarized info
+type ChainData struct {
+	ChainID                   dto.ChainID `protobuf:"varint,1,opt,name=ChainID,proto3,enum=proto.ChainID" json:"chainID"`
+	ExtendedShardHeaderHashes [][]byte    `protobuf:"bytes,2,rep,name=ExtendedShardHeaderHashes,proto3" json:"extendedShardHeaderHashes,omitempty"`
+}
+
+func (m *ChainData) Reset()      { *m = ChainData{} }
+func (*ChainData) ProtoMessage() {}
+func (*ChainData) Descriptor() ([]byte, []int) {
+	return fileDescriptor_b9b8ff297a820152, []int{2}
+}
+func (m *ChainData) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *ChainData) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	b = b[:cap(b)]
+	n, err := m.MarshalToSizedBuffer(b)
+	if err != nil {
+		return nil, err
+	}
+	return b[:n], nil
+}
+func (m *ChainData) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ChainData.Merge(m, src)
+}
+func (m *ChainData) XXX_Size() int {
+	return m.Size()
+}
+func (m *ChainData) XXX_DiscardUnknown() {
+	xxx_messageInfo_ChainData.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_ChainData proto.InternalMessageInfo
+
+func (m *ChainData) GetChainID() dto.ChainID {
+	if m != nil {
+		return m.ChainID
+	}
+	return dto.UNSPECIFIED
+}
+
+func (m *ChainData) GetExtendedShardHeaderHashes() [][]byte {
+	if m != nil {
+		return m.ExtendedShardHeaderHashes
+	}
+	return nil
+}
+
 // SovereignChainHeader extends the Header structure with extra fields needed by sovereign chain
 type SovereignChainHeader struct {
-	Header                    *Header                    `protobuf:"bytes,1,opt,name=Header,proto3" json:"header"`
-	ValidatorStatsRootHash    []byte                     `protobuf:"bytes,2,opt,name=ValidatorStatsRootHash,proto3" json:"validatorStatsRootHash"`
-	ExtendedShardHeaderHashes [][]byte                   `protobuf:"bytes,3,rep,name=ExtendedShardHeaderHashes,proto3" json:"extendedShardHeaderHashes,omitempty"`
-	OutGoingMiniBlockHeaders  []*OutGoingMiniBlockHeader `protobuf:"bytes,4,rep,name=OutGoingMiniBlockHeaders,proto3" json:"outGoingOperations,omitempty"`
-	IsStartOfEpoch            bool                       `protobuf:"varint,5,opt,name=IsStartOfEpoch,proto3" json:"isStartOfEpoch,omitempty"`
-	AccumulatedFeesInEpoch    *math_big.Int              `protobuf:"bytes,6,opt,name=AccumulatedFeesInEpoch,proto3,casttypewith=math/big.Int;github.com/multiversx/mx-chain-core-go/data.BigIntCaster" json:"accumulatedFeesInEpoch,omitempty"`
-	DevFeesInEpoch            *math_big.Int              `protobuf:"bytes,7,opt,name=DevFeesInEpoch,proto3,casttypewith=math/big.Int;github.com/multiversx/mx-chain-core-go/data.BigIntCaster" json:"devFeesInEpoch,omitempty"`
-	EpochStart                EpochStartSovereign        `protobuf:"bytes,8,opt,name=EpochStart,proto3" json:"epochStart,omitempty"`
+	Header                   *Header                    `protobuf:"bytes,1,opt,name=Header,proto3" json:"header"`
+	ValidatorStatsRootHash   []byte                     `protobuf:"bytes,2,opt,name=ValidatorStatsRootHash,proto3" json:"validatorStatsRootHash"`
+	ChainsData               []ChainData                `protobuf:"bytes,3,rep,name=ChainsData,proto3" json:"chainsData,omitempty"`
+	OutGoingMiniBlockHeaders []*OutGoingMiniBlockHeader `protobuf:"bytes,4,rep,name=OutGoingMiniBlockHeaders,proto3" json:"outGoingOperations,omitempty"`
+	IsStartOfEpoch           bool                       `protobuf:"varint,5,opt,name=IsStartOfEpoch,proto3" json:"isStartOfEpoch,omitempty"`
+	AccumulatedFeesInEpoch   *math_big.Int              `protobuf:"bytes,6,opt,name=AccumulatedFeesInEpoch,proto3,casttypewith=math/big.Int;github.com/multiversx/mx-chain-core-go/data.BigIntCaster" json:"accumulatedFeesInEpoch,omitempty"`
+	DevFeesInEpoch           *math_big.Int              `protobuf:"bytes,7,opt,name=DevFeesInEpoch,proto3,casttypewith=math/big.Int;github.com/multiversx/mx-chain-core-go/data.BigIntCaster" json:"devFeesInEpoch,omitempty"`
+	EpochStart               EpochStartSovereign        `protobuf:"bytes,8,opt,name=EpochStart,proto3" json:"epochStart,omitempty"`
 }
 
 func (m *SovereignChainHeader) Reset()      { *m = SovereignChainHeader{} }
 func (*SovereignChainHeader) ProtoMessage() {}
 func (*SovereignChainHeader) Descriptor() ([]byte, []int) {
-	return fileDescriptor_b9b8ff297a820152, []int{2}
+	return fileDescriptor_b9b8ff297a820152, []int{3}
 }
 func (m *SovereignChainHeader) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -233,9 +282,9 @@ func (m *SovereignChainHeader) GetValidatorStatsRootHash() []byte {
 	return nil
 }
 
-func (m *SovereignChainHeader) GetExtendedShardHeaderHashes() [][]byte {
+func (m *SovereignChainHeader) GetChainsData() []ChainData {
 	if m != nil {
-		return m.ExtendedShardHeaderHashes
+		return m.ChainsData
 	}
 	return nil
 }
@@ -278,15 +327,16 @@ func (m *SovereignChainHeader) GetEpochStart() EpochStartSovereign {
 type OutGoingMiniBlockHeader struct {
 	Type                                  OutGoingMBType `protobuf:"varint,1,opt,name=Type,proto3,enum=proto.OutGoingMBType" json:"type,omitempty"`
 	Hash                                  []byte         `protobuf:"bytes,2,opt,name=Hash,proto3" json:"hash,omitempty"`
-	OutGoingOperationsHash                []byte         `protobuf:"bytes,3,opt,name=OutGoingOperationsHash,proto3" json:"outGoingOperationsHash,omitempty"`
-	AggregatedSignatureOutGoingOperations []byte         `protobuf:"bytes,4,opt,name=AggregatedSignatureOutGoingOperations,proto3" json:"aggregatedSignatureOutGoingOperations,omitempty"`
-	LeaderSignatureOutGoingOperations     []byte         `protobuf:"bytes,5,opt,name=LeaderSignatureOutGoingOperations,proto3" json:"leaderSignatureOutGoingOperations,omitempty"`
+	ChainID                               dto.ChainID    `protobuf:"varint,3,opt,name=ChainID,proto3,enum=proto.ChainID" json:"chainID"`
+	OutGoingOperationsHash                []byte         `protobuf:"bytes,4,opt,name=OutGoingOperationsHash,proto3" json:"outGoingOperationsHash,omitempty"`
+	AggregatedSignatureOutGoingOperations []byte         `protobuf:"bytes,5,opt,name=AggregatedSignatureOutGoingOperations,proto3" json:"aggregatedSignatureOutGoingOperations,omitempty"`
+	LeaderSignatureOutGoingOperations     []byte         `protobuf:"bytes,6,opt,name=LeaderSignatureOutGoingOperations,proto3" json:"leaderSignatureOutGoingOperations,omitempty"`
 }
 
 func (m *OutGoingMiniBlockHeader) Reset()      { *m = OutGoingMiniBlockHeader{} }
 func (*OutGoingMiniBlockHeader) ProtoMessage() {}
 func (*OutGoingMiniBlockHeader) Descriptor() ([]byte, []int) {
-	return fileDescriptor_b9b8ff297a820152, []int{3}
+	return fileDescriptor_b9b8ff297a820152, []int{4}
 }
 func (m *OutGoingMiniBlockHeader) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -325,6 +375,13 @@ func (m *OutGoingMiniBlockHeader) GetHash() []byte {
 	return nil
 }
 
+func (m *OutGoingMiniBlockHeader) GetChainID() dto.ChainID {
+	if m != nil {
+		return m.ChainID
+	}
+	return dto.UNSPECIFIED
+}
+
 func (m *OutGoingMiniBlockHeader) GetOutGoingOperationsHash() []byte {
 	if m != nil {
 		return m.OutGoingOperationsHash
@@ -350,6 +407,7 @@ func init() {
 	proto.RegisterEnum("proto.OutGoingMBType", OutGoingMBType_name, OutGoingMBType_value)
 	proto.RegisterType((*EpochStartSovereign)(nil), "proto.EpochStartSovereign")
 	proto.RegisterType((*EpochStartCrossChainData)(nil), "proto.EpochStartCrossChainData")
+	proto.RegisterType((*ChainData)(nil), "proto.ChainData")
 	proto.RegisterType((*SovereignChainHeader)(nil), "proto.SovereignChainHeader")
 	proto.RegisterType((*OutGoingMiniBlockHeader)(nil), "proto.OutGoingMiniBlockHeader")
 }
@@ -357,66 +415,71 @@ func init() {
 func init() { proto.RegisterFile("sovereignChainHeader.proto", fileDescriptor_b9b8ff297a820152) }
 
 var fileDescriptor_b9b8ff297a820152 = []byte{
-	// 930 bytes of a gzipped FileDescriptorProto
+	// 1015 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xb4, 0x56, 0xcf, 0x6f, 0xe3, 0x44,
-	0x14, 0xce, 0x90, 0x1f, 0xdd, 0x4e, 0x76, 0x43, 0x76, 0xe8, 0x16, 0x13, 0xb2, 0x76, 0x28, 0x14,
-	0x22, 0xa0, 0x89, 0xe8, 0x5e, 0x90, 0x00, 0xa1, 0xba, 0xe9, 0xb2, 0x11, 0x0b, 0x95, 0x9c, 0x05,
-	0xa1, 0x15, 0x97, 0x89, 0xfd, 0xd6, 0x19, 0x6d, 0x3c, 0x13, 0xd9, 0x93, 0xaa, 0x45, 0x20, 0x71,
-	0x45, 0x02, 0x89, 0x3f, 0x02, 0x24, 0xc4, 0x5f, 0xb2, 0xc7, 0x1e, 0x2b, 0x0e, 0x86, 0xa6, 0x07,
-	0xc0, 0xa7, 0xfd, 0x13, 0x90, 0xc7, 0x69, 0xec, 0xfe, 0x70, 0x77, 0x2f, 0x9c, 0x5a, 0x7f, 0xef,
-	0x7b, 0xdf, 0x7b, 0xf3, 0xe6, 0x7b, 0xa3, 0xe0, 0x46, 0x20, 0xf6, 0xc0, 0x07, 0xe6, 0xf2, 0xed,
-	0x11, 0x65, 0xfc, 0x1e, 0x50, 0x07, 0xfc, 0xce, 0xc4, 0x17, 0x52, 0x90, 0xb2, 0xfa, 0xd3, 0xd8,
-	0x70, 0x99, 0x1c, 0x4d, 0x87, 0x1d, 0x5b, 0x78, 0x5d, 0x57, 0xb8, 0xa2, 0xab, 0xe0, 0xe1, 0xf4,
-	0x91, 0xfa, 0x52, 0x1f, 0xea, 0xbf, 0x24, 0xab, 0x51, 0x1d, 0x8e, 0x85, 0xfd, 0x78, 0xfe, 0xf1,
-	0xa2, 0x07, 0x92, 0x9a, 0x29, 0xb0, 0xf6, 0x37, 0xc2, 0x2f, 0xed, 0x4c, 0x84, 0x3d, 0x1a, 0x48,
-	0xea, 0xcb, 0xc1, 0x69, 0x71, 0xb2, 0x85, 0x97, 0x77, 0x6c, 0xc1, 0x85, 0xc7, 0xec, 0x40, 0x43,
-	0x2d, 0xd4, 0xae, 0x6e, 0xd6, 0x93, 0x94, 0xce, 0x02, 0x37, 0x6f, 0x3e, 0x09, 0x8d, 0x42, 0x14,
-	0x1a, 0xcb, 0x70, 0x0a, 0x59, 0x69, 0x16, 0xf9, 0x11, 0xe1, 0xdb, 0xf7, 0x69, 0x20, 0xef, 0x32,
-	0x4e, 0xc7, 0xec, 0x1b, 0x70, 0xb6, 0x7d, 0x11, 0x04, 0x99, 0x63, 0x69, 0x2f, 0x28, 0x5d, 0xe3,
-	0x54, 0x77, 0xd1, 0x46, 0x4a, 0xec, 0x51, 0x49, 0xcd, 0xf5, 0x79, 0x99, 0xdb, 0xe3, 0xab, 0xd4,
-	0xac, 0xab, 0x8b, 0xad, 0x85, 0x08, 0x6b, 0x79, 0x25, 0xc8, 0x3a, 0x5e, 0x1a, 0x8c, 0xa8, 0xef,
-	0xf4, 0x7b, 0xea, 0xb0, 0x37, 0xcc, 0x6a, 0x14, 0x1a, 0x4b, 0x41, 0x02, 0x59, 0xa7, 0x31, 0x62,
-	0xe0, 0xb2, 0x92, 0xd0, 0x96, 0x15, 0x69, 0x39, 0x0a, 0x8d, 0x32, 0xc4, 0x80, 0x95, 0xe0, 0x31,
-	0xc1, 0x12, 0x53, 0xee, 0x68, 0x4b, 0x2d, 0xd4, 0x2e, 0x25, 0x04, 0x3f, 0x06, 0xac, 0x04, 0x8f,
-	0x09, 0x9f, 0x0b, 0x6e, 0x83, 0x76, 0x2d, 0x25, 0xf0, 0x18, 0xb0, 0x12, 0x9c, 0xbc, 0x8f, 0x71,
-	0xd2, 0xf0, 0x3d, 0x1a, 0x8c, 0xd4, 0x84, 0xae, 0x9b, 0x5a, 0x14, 0x1a, 0x2b, 0xa3, 0x05, 0xfa,
-	0xae, 0xf0, 0x98, 0x04, 0x6f, 0x22, 0x0f, 0xac, 0x0c, 0x77, 0xed, 0x8f, 0x0a, 0x5e, 0x19, 0x5c,
-	0xe2, 0x1e, 0xf2, 0x1e, 0xae, 0xcc, 0x07, 0x9e, 0x5c, 0xe4, 0x8d, 0xf9, 0xc0, 0x13, 0xd0, 0xc4,
-	0x51, 0x68, 0x54, 0x12, 0x75, 0x6b, 0x4e, 0x24, 0x16, 0x5e, 0xfd, 0x92, 0x8e, 0x99, 0x43, 0xa5,
-	0xf0, 0x07, 0x92, 0xca, 0xc0, 0x12, 0x42, 0x66, 0x3a, 0x6a, 0x44, 0xa1, 0xb1, 0xba, 0x77, 0x29,
-	0xc3, 0xca, 0xc9, 0x24, 0x80, 0x5f, 0xd9, 0xd9, 0x97, 0xc0, 0x1d, 0x70, 0xd4, 0x3c, 0xd3, 0xd6,
-	0x21, 0xd0, 0x8a, 0xad, 0x62, 0xfb, 0xba, 0xf9, 0x56, 0x14, 0x1a, 0xaf, 0x43, 0x1e, 0x29, 0x73,
-	0xee, 0x7c, 0x25, 0xf2, 0x2d, 0xd6, 0x76, 0xa7, 0xf2, 0x13, 0xc1, 0xb8, 0xfb, 0x19, 0xe3, 0x4c,
-	0x99, 0x3d, 0x21, 0x04, 0x5a, 0xa9, 0x55, 0x6c, 0x57, 0x37, 0xf5, 0xf9, 0xf9, 0x73, 0x68, 0x66,
-	0x2b, 0x0a, 0x8d, 0xa6, 0x98, 0x07, 0x77, 0x27, 0xe0, 0x53, 0xc9, 0x04, 0xcf, 0x96, 0xcf, 0xad,
-	0x40, 0x7a, 0xb8, 0xd6, 0x0f, 0x94, 0xc3, 0x76, 0x1f, 0x25, 0x56, 0x29, 0xb7, 0x50, 0xfb, 0x9a,
-	0xd9, 0x8c, 0x42, 0x43, 0x63, 0x67, 0x22, 0x19, 0xbd, 0x73, 0x39, 0xe4, 0x57, 0x84, 0x57, 0xb7,
-	0x6c, 0x7b, 0xea, 0x4d, 0xc7, 0x54, 0x82, 0x73, 0x17, 0x20, 0xe8, 0xf3, 0x44, 0xae, 0xa2, 0xe6,
-	0xef, 0x45, 0xa1, 0xd1, 0xa2, 0x97, 0x32, 0x52, 0xd9, 0xdf, 0xff, 0x34, 0x76, 0x3c, 0x2a, 0x47,
-	0xdd, 0x21, 0x73, 0x3b, 0x7d, 0x2e, 0x3f, 0xc8, 0x3c, 0x1c, 0xde, 0x74, 0x2c, 0xd9, 0x1e, 0xf8,
-	0xc1, 0x7e, 0xd7, 0xdb, 0xdf, 0xb0, 0x63, 0xb7, 0x6c, 0xd8, 0xc2, 0x87, 0x0d, 0x57, 0x74, 0x1d,
-	0x2a, 0x69, 0xc7, 0x64, 0x6e, 0x9f, 0xcb, 0x6d, 0x1a, 0x48, 0xf0, 0xad, 0x9c, 0x66, 0xc8, 0x4f,
-	0x08, 0xd7, 0x7a, 0xb0, 0x97, 0xed, 0x6f, 0x49, 0xf5, 0x07, 0xf1, 0x71, 0x9d, 0x33, 0x91, 0xff,
-	0xa3, 0xaf, 0x73, 0xc5, 0xc9, 0x57, 0x18, 0xa7, 0x2b, 0xae, 0x56, 0xac, 0xba, 0xd9, 0xb8, 0xf0,
-	0xbc, 0x2c, 0x96, 0xc4, 0x6c, 0xce, 0x5f, 0x96, 0x15, 0x58, 0x04, 0xb3, 0xcb, 0x95, 0xa6, 0xac,
-	0xfd, 0x5b, 0xc4, 0x2f, 0xe7, 0x5c, 0x3a, 0xf9, 0x08, 0x97, 0x1e, 0x1c, 0x4c, 0x40, 0x6d, 0x57,
-	0x6d, 0xf3, 0xd6, 0x79, 0x77, 0x99, 0x71, 0xd0, 0x24, 0x51, 0x68, 0xd4, 0xe4, 0xc1, 0x04, 0x32,
-	0x05, 0x54, 0x1a, 0x79, 0x13, 0x97, 0x32, 0x9b, 0xa5, 0x78, 0xa3, 0xb3, 0x5b, 0xae, 0xe2, 0xe4,
-	0x6b, 0xbc, 0xba, 0x7b, 0xc1, 0x94, 0x2a, 0xb3, 0xa8, 0x32, 0xdf, 0x88, 0x3d, 0x21, 0x2e, 0x65,
-	0x64, 0xb4, 0x72, 0x34, 0xc8, 0x0f, 0x08, 0xaf, 0x6f, 0xb9, 0xae, 0x0f, 0x6e, 0x7c, 0xc9, 0x03,
-	0xe6, 0x72, 0x2a, 0xa7, 0x3e, 0x5c, 0x64, 0x6b, 0x25, 0x55, 0xed, 0x4e, 0x14, 0x1a, 0x5d, 0xfa,
-	0x3c, 0x09, 0x99, 0xe2, 0xcf, 0x57, 0x81, 0x7c, 0x87, 0x5f, 0xbb, 0xaf, 0x46, 0x7b, 0x55, 0x1b,
-	0x65, 0xd5, 0x46, 0x37, 0x0a, 0x8d, 0x77, 0xc6, 0xcf, 0x22, 0x67, 0x5a, 0x78, 0xb6, 0xf2, 0xdb,
-	0xbf, 0x20, 0x5c, 0x3b, 0x7b, 0x7b, 0xe4, 0x16, 0xbe, 0xb9, 0x40, 0x86, 0x3d, 0x98, 0x88, 0x80,
-	0xc9, 0x7a, 0x81, 0xb4, 0x70, 0x33, 0x85, 0xb7, 0x47, 0x94, 0xbb, 0x90, 0x3e, 0x7e, 0x20, 0xeb,
-	0x3a, 0x79, 0x35, 0x63, 0x1b, 0xd3, 0x02, 0x97, 0xc5, 0xbe, 0x7d, 0x20, 0x1e, 0x03, 0xaf, 0x7f,
-	0x48, 0x9a, 0x99, 0xa7, 0x6a, 0x11, 0x34, 0xc7, 0xc1, 0xa7, 0x70, 0x50, 0x7f, 0x48, 0x74, 0xdc,
-	0x48, 0xa3, 0x5f, 0xf0, 0x73, 0xf1, 0x7d, 0xf3, 0xe3, 0xc3, 0x63, 0xbd, 0x70, 0x74, 0xac, 0x17,
-	0x9e, 0x1e, 0xeb, 0xe8, 0xfb, 0x99, 0x8e, 0x7e, 0x9b, 0xe9, 0xe8, 0xc9, 0x4c, 0x47, 0x87, 0x33,
-	0x1d, 0x1d, 0xcd, 0x74, 0xf4, 0xd7, 0x4c, 0x47, 0xff, 0xcc, 0xf4, 0xc2, 0xd3, 0x99, 0x8e, 0x7e,
-	0x3e, 0xd1, 0x0b, 0x87, 0x27, 0x7a, 0xe1, 0xe8, 0x44, 0x2f, 0x3c, 0x2c, 0xab, 0x9f, 0x04, 0xc3,
-	0x8a, 0x32, 0xea, 0x9d, 0xff, 0x02, 0x00, 0x00, 0xff, 0xff, 0xb3, 0x17, 0x4e, 0xc6, 0x74, 0x08,
-	0x00, 0x00,
+	0x14, 0xce, 0xec, 0xa6, 0xcd, 0x66, 0xd2, 0x0d, 0xd9, 0xa1, 0x5b, 0x4c, 0xc8, 0xda, 0x21, 0x50,
+	0x88, 0x80, 0xc4, 0xa2, 0x2b, 0x24, 0x24, 0x40, 0xa8, 0x6e, 0xba, 0x6c, 0xc4, 0xb2, 0x95, 0x9c,
+	0xe5, 0x87, 0x56, 0x5c, 0x26, 0xf6, 0xac, 0x33, 0xda, 0xd8, 0x13, 0xd9, 0x93, 0xaa, 0x45, 0x20,
+	0x71, 0x45, 0x02, 0x89, 0x3f, 0x81, 0x03, 0x48, 0xc0, 0xbf, 0xc1, 0x65, 0x8f, 0x3d, 0xf6, 0x64,
+	0x68, 0x7a, 0x00, 0xf9, 0xb4, 0x7f, 0x02, 0xf2, 0xd8, 0xb1, 0xa7, 0x3f, 0xd2, 0x2d, 0x07, 0x4e,
+	0xad, 0xbf, 0xf7, 0xcd, 0x7b, 0xdf, 0xbc, 0xf9, 0xde, 0x53, 0x60, 0x3d, 0x60, 0xbb, 0xc4, 0x27,
+	0xd4, 0xf1, 0xb6, 0x46, 0x98, 0x7a, 0x77, 0x09, 0xb6, 0x89, 0xdf, 0x9d, 0xf8, 0x8c, 0x33, 0xb4,
+	0x24, 0xfe, 0xd4, 0x3b, 0x0e, 0xe5, 0xa3, 0xe9, 0xb0, 0x6b, 0x31, 0x57, 0x77, 0x98, 0xc3, 0x74,
+	0x01, 0x0f, 0xa7, 0x8f, 0xc4, 0x97, 0xf8, 0x10, 0xff, 0x25, 0xa7, 0xea, 0x95, 0xe1, 0x98, 0x59,
+	0x8f, 0xd3, 0x8f, 0xe7, 0x5c, 0xc2, 0xb1, 0x21, 0x01, 0x9f, 0x4b, 0xc9, 0xdc, 0xe9, 0x98, 0xd3,
+	0x5d, 0xe2, 0x07, 0x7b, 0xba, 0xbb, 0xd7, 0xb1, 0xe2, 0xfa, 0x1d, 0x8b, 0xf9, 0xa4, 0x93, 0x69,
+	0xea, 0x38, 0x4c, 0xb7, 0x31, 0xc7, 0x7a, 0x86, 0xe8, 0x36, 0x67, 0x7a, 0xc0, 0xa6, 0xbe, 0x45,
+	0x84, 0xe0, 0x7e, 0x2f, 0x49, 0xdc, 0xfa, 0x1b, 0xc0, 0xe7, 0xb7, 0x27, 0xcc, 0x1a, 0x0d, 0x38,
+	0xf6, 0xf9, 0x60, 0xce, 0x47, 0x9b, 0xb0, 0xbc, 0x6d, 0x31, 0x8f, 0xb9, 0xd4, 0x0a, 0x14, 0xd0,
+	0x04, 0xed, 0xca, 0x46, 0x2d, 0x39, 0xd2, 0xcd, 0x70, 0xe3, 0xc6, 0x93, 0x50, 0x2b, 0x44, 0xa1,
+	0x56, 0x26, 0x73, 0xc8, 0xcc, 0x4f, 0xa1, 0xef, 0x01, 0xbc, 0x75, 0x0f, 0x07, 0xfc, 0x0e, 0xf5,
+	0xf0, 0x98, 0x7e, 0x45, 0xec, 0x2d, 0x9f, 0x05, 0x81, 0xd4, 0x2f, 0xe5, 0x4a, 0xf3, 0x6a, 0xbb,
+	0xb2, 0xa1, 0xcd, 0xf3, 0x66, 0x32, 0x72, 0x62, 0x0f, 0x73, 0x6c, 0xac, 0xa7, 0x65, 0x6e, 0x8d,
+	0x2f, 0xca, 0x66, 0x5e, 0x5c, 0xac, 0x15, 0x02, 0xa8, 0x2c, 0x2a, 0x81, 0xd6, 0x61, 0x69, 0x30,
+	0xc2, 0xbe, 0xdd, 0xef, 0x89, 0xcb, 0x5e, 0x37, 0x2a, 0x51, 0xa8, 0x95, 0x82, 0x04, 0x32, 0xe7,
+	0x31, 0xa4, 0xc1, 0x25, 0x91, 0x42, 0x29, 0x0b, 0x52, 0x39, 0x0a, 0xb5, 0x25, 0x12, 0x03, 0x66,
+	0x82, 0xc7, 0x04, 0x93, 0x4d, 0x3d, 0x5b, 0x29, 0x35, 0x41, 0xbb, 0x98, 0x10, 0xfc, 0x18, 0x30,
+	0x13, 0x3c, 0x26, 0xdc, 0x67, 0x9e, 0x45, 0x94, 0x6b, 0x39, 0xc1, 0x8b, 0x01, 0x33, 0xc1, 0xd1,
+	0xbb, 0x10, 0x26, 0x82, 0xef, 0xe2, 0x60, 0xa4, 0x5c, 0x69, 0x82, 0xf6, 0x8a, 0xa1, 0x44, 0xa1,
+	0xb6, 0x3a, 0xca, 0xd0, 0xb7, 0x98, 0x4b, 0x39, 0x71, 0x27, 0x7c, 0xdf, 0x94, 0xb8, 0xad, 0xdf,
+	0x00, 0x2c, 0xe7, 0x37, 0x7a, 0x07, 0x96, 0xd2, 0x97, 0x16, 0x37, 0xaa, 0x6e, 0x54, 0xd3, 0x36,
+	0xa7, 0x68, 0x72, 0x43, 0x2b, 0xf9, 0x30, 0xe7, 0x5c, 0x44, 0xe0, 0x8b, 0xdb, 0x7b, 0x9c, 0x78,
+	0x36, 0xb1, 0xc5, 0xa5, 0xf3, 0xfc, 0x24, 0x10, 0xef, 0xb5, 0x62, 0xbc, 0x1e, 0x85, 0xda, 0x2b,
+	0x64, 0x11, 0x49, 0x12, 0xb7, 0x38, 0x53, 0xeb, 0x8f, 0x65, 0xb8, 0x3a, 0x38, 0x67, 0x84, 0xd0,
+	0xdb, 0x70, 0x39, 0x35, 0x47, 0x62, 0xba, 0xeb, 0xa9, 0xea, 0x04, 0x34, 0x60, 0x14, 0x6a, 0xcb,
+	0x49, 0x27, 0xcc, 0x94, 0x88, 0x4c, 0xb8, 0xf6, 0x19, 0x1e, 0x53, 0x1b, 0x73, 0xe6, 0x0f, 0x38,
+	0xe6, 0x81, 0xc9, 0x18, 0x97, 0xba, 0x57, 0x8f, 0x42, 0x6d, 0x6d, 0xf7, 0x5c, 0x86, 0xb9, 0xe0,
+	0x24, 0xba, 0x0f, 0xa1, 0x50, 0x15, 0xc4, 0xbd, 0x54, 0xae, 0x0a, 0x9f, 0xd6, 0xe4, 0x06, 0x0a,
+	0x63, 0x36, 0x52, 0x63, 0xae, 0x5a, 0x19, 0x57, 0x7e, 0x9b, 0x3c, 0x03, 0xfa, 0x1a, 0x2a, 0x3b,
+	0x53, 0xfe, 0x11, 0xa3, 0x9e, 0xf3, 0x09, 0xf5, 0xa8, 0x18, 0xed, 0x44, 0x7e, 0xa0, 0x14, 0x45,
+	0x76, 0x35, 0xcd, 0xbe, 0x80, 0x66, 0x34, 0xa3, 0x50, 0x6b, 0xb0, 0x34, 0xb8, 0x33, 0x21, 0x3e,
+	0xe6, 0x94, 0x79, 0x72, 0xbb, 0x17, 0x56, 0x40, 0x3d, 0x58, 0xed, 0x07, 0xc2, 0xf6, 0x3b, 0x8f,
+	0x12, 0xff, 0x2e, 0x35, 0x41, 0xfb, 0x9a, 0xd1, 0x88, 0x42, 0x4d, 0xa1, 0x27, 0x22, 0x52, 0xbe,
+	0x53, 0x67, 0xd0, 0x2f, 0x00, 0xae, 0x6d, 0x5a, 0xd6, 0xd4, 0x9d, 0x8e, 0x31, 0x27, 0xf6, 0x1d,
+	0x42, 0x82, 0xbe, 0x97, 0xa4, 0x5b, 0x16, 0x8d, 0x76, 0xa3, 0x50, 0x6b, 0xe2, 0x73, 0x19, 0x79,
+	0xda, 0xdf, 0xff, 0xd4, 0xb6, 0x5d, 0xcc, 0x47, 0xfa, 0x90, 0x3a, 0xdd, 0xbe, 0xc7, 0xdf, 0xbb,
+	0xcc, 0x66, 0x4b, 0xf7, 0x59, 0xd7, 0xa0, 0x4e, 0xdf, 0xe3, 0x5b, 0x38, 0xe0, 0xc4, 0x37, 0x17,
+	0x88, 0x41, 0x3f, 0x00, 0x58, 0xed, 0x91, 0x5d, 0x59, 0x5f, 0x49, 0xe8, 0x23, 0xf1, 0x75, 0xed,
+	0x13, 0x91, 0xff, 0x43, 0xd7, 0xa9, 0xe2, 0xe8, 0x0b, 0x08, 0xf3, 0xbd, 0x23, 0xe6, 0xbe, 0xb2,
+	0x51, 0x3f, 0xb3, 0xf3, 0xb2, 0x69, 0xc8, 0x5d, 0x45, 0xb2, 0xa0, 0xec, 0xaa, 0xfc, 0x48, 0xeb,
+	0xa7, 0x22, 0x7c, 0x61, 0xc1, 0xa3, 0xa3, 0x0f, 0x60, 0xf1, 0xc1, 0xfe, 0x84, 0xa4, 0xc3, 0x7f,
+	0xf3, 0xb4, 0xbb, 0x8c, 0x38, 0x68, 0xa0, 0x28, 0xd4, 0xaa, 0x7c, 0x7f, 0x42, 0xa4, 0x02, 0xe2,
+	0x18, 0x7a, 0x0d, 0x16, 0xa5, 0x11, 0x12, 0xbc, 0xd1, 0xc9, 0xd5, 0x23, 0xe2, 0xf2, 0x9a, 0xb9,
+	0xfa, 0x1f, 0xd6, 0xcc, 0x97, 0x70, 0x6d, 0xe7, 0x8c, 0x97, 0x45, 0xc1, 0xa2, 0x28, 0xf8, 0x6a,
+	0x6c, 0x25, 0x76, 0x2e, 0x43, 0x92, 0xb0, 0x20, 0x07, 0xfa, 0x0e, 0xc0, 0xf5, 0x4d, 0xc7, 0xf1,
+	0x89, 0x13, 0x7b, 0x63, 0x40, 0x1d, 0x0f, 0xf3, 0xa9, 0x4f, 0xce, 0xb2, 0xc5, 0x1c, 0xac, 0x18,
+	0xb7, 0xa3, 0x50, 0xd3, 0xf1, 0x65, 0x0e, 0x48, 0xc5, 0x2f, 0x57, 0x01, 0x7d, 0x03, 0x5f, 0xbe,
+	0x27, 0x5e, 0xe4, 0x22, 0x19, 0xc9, 0xfc, 0xe8, 0x51, 0xa8, 0xbd, 0x39, 0x7e, 0x16, 0x59, 0x92,
+	0xf0, 0xec, 0xcc, 0x6f, 0xfc, 0x0c, 0x60, 0xf5, 0xe4, 0xa3, 0xa3, 0x9b, 0xf0, 0x46, 0x86, 0x0c,
+	0x7b, 0x64, 0xc2, 0x02, 0xca, 0x6b, 0x05, 0xd4, 0x84, 0x8d, 0x1c, 0xde, 0x1a, 0x61, 0xcf, 0x21,
+	0xf9, 0x72, 0x24, 0xbc, 0xa6, 0xa2, 0x97, 0x24, 0xb7, 0x19, 0x26, 0x71, 0x68, 0x6c, 0xf7, 0x07,
+	0xec, 0x31, 0xf1, 0x6a, 0xef, 0xa3, 0x86, 0xb4, 0xe1, 0xb2, 0xa0, 0x31, 0x0e, 0x3e, 0x26, 0xfb,
+	0xb5, 0x87, 0x48, 0x85, 0xf5, 0x3c, 0xfa, 0xa9, 0x77, 0x2a, 0xbe, 0x67, 0x7c, 0x78, 0x70, 0xa4,
+	0x16, 0x0e, 0x8f, 0xd4, 0xc2, 0xd3, 0x23, 0x15, 0x7c, 0x3b, 0x53, 0xc1, 0xaf, 0x33, 0x15, 0x3c,
+	0x99, 0xa9, 0xe0, 0x60, 0xa6, 0x82, 0xc3, 0x99, 0x0a, 0xfe, 0x9a, 0xa9, 0xe0, 0x9f, 0x99, 0x5a,
+	0x78, 0x3a, 0x53, 0xc1, 0x8f, 0xc7, 0x6a, 0xe1, 0xe0, 0x58, 0x2d, 0x1c, 0x1e, 0xab, 0x85, 0x87,
+	0x4b, 0xe2, 0x77, 0xd3, 0x70, 0x59, 0xb8, 0xee, 0xf6, 0xbf, 0x01, 0x00, 0x00, 0xff, 0xff, 0x62,
+	0x84, 0x24, 0x75, 0x99, 0x09, 0x00, 0x00,
 }
 
 func (x OutGoingMBType) String() string {
@@ -448,8 +511,13 @@ func (this *EpochStartSovereign) Equal(that interface{}) bool {
 	if !this.Economics.Equal(&that1.Economics) {
 		return false
 	}
-	if !this.LastFinalizedCrossChainHeader.Equal(&that1.LastFinalizedCrossChainHeader) {
+	if len(this.LastFinalizedCrossChainHeader) != len(that1.LastFinalizedCrossChainHeader) {
 		return false
+	}
+	for i := range this.LastFinalizedCrossChainHeader {
+		if !this.LastFinalizedCrossChainHeader[i].Equal(&that1.LastFinalizedCrossChainHeader[i]) {
+			return false
+		}
 	}
 	return true
 }
@@ -489,6 +557,38 @@ func (this *EpochStartCrossChainData) Equal(that interface{}) bool {
 	}
 	return true
 }
+func (this *ChainData) Equal(that interface{}) bool {
+	if that == nil {
+		return this == nil
+	}
+
+	that1, ok := that.(*ChainData)
+	if !ok {
+		that2, ok := that.(ChainData)
+		if ok {
+			that1 = &that2
+		} else {
+			return false
+		}
+	}
+	if that1 == nil {
+		return this == nil
+	} else if this == nil {
+		return false
+	}
+	if this.ChainID != that1.ChainID {
+		return false
+	}
+	if len(this.ExtendedShardHeaderHashes) != len(that1.ExtendedShardHeaderHashes) {
+		return false
+	}
+	for i := range this.ExtendedShardHeaderHashes {
+		if !bytes.Equal(this.ExtendedShardHeaderHashes[i], that1.ExtendedShardHeaderHashes[i]) {
+			return false
+		}
+	}
+	return true
+}
 func (this *SovereignChainHeader) Equal(that interface{}) bool {
 	if that == nil {
 		return this == nil
@@ -514,11 +614,11 @@ func (this *SovereignChainHeader) Equal(that interface{}) bool {
 	if !bytes.Equal(this.ValidatorStatsRootHash, that1.ValidatorStatsRootHash) {
 		return false
 	}
-	if len(this.ExtendedShardHeaderHashes) != len(that1.ExtendedShardHeaderHashes) {
+	if len(this.ChainsData) != len(that1.ChainsData) {
 		return false
 	}
-	for i := range this.ExtendedShardHeaderHashes {
-		if !bytes.Equal(this.ExtendedShardHeaderHashes[i], that1.ExtendedShardHeaderHashes[i]) {
+	for i := range this.ChainsData {
+		if !this.ChainsData[i].Equal(&that1.ChainsData[i]) {
 			return false
 		}
 	}
@@ -575,6 +675,9 @@ func (this *OutGoingMiniBlockHeader) Equal(that interface{}) bool {
 	if !bytes.Equal(this.Hash, that1.Hash) {
 		return false
 	}
+	if this.ChainID != that1.ChainID {
+		return false
+	}
 	if !bytes.Equal(this.OutGoingOperationsHash, that1.OutGoingOperationsHash) {
 		return false
 	}
@@ -593,7 +696,13 @@ func (this *EpochStartSovereign) GoString() string {
 	s := make([]string, 0, 6)
 	s = append(s, "&block.EpochStartSovereign{")
 	s = append(s, "Economics: "+strings.Replace(this.Economics.GoString(), `&`, ``, 1)+",\n")
-	s = append(s, "LastFinalizedCrossChainHeader: "+strings.Replace(this.LastFinalizedCrossChainHeader.GoString(), `&`, ``, 1)+",\n")
+	if this.LastFinalizedCrossChainHeader != nil {
+		vs := make([]EpochStartCrossChainData, len(this.LastFinalizedCrossChainHeader))
+		for i := range vs {
+			vs[i] = this.LastFinalizedCrossChainHeader[i]
+		}
+		s = append(s, "LastFinalizedCrossChainHeader: "+fmt.Sprintf("%#v", vs)+",\n")
+	}
 	s = append(s, "}")
 	return strings.Join(s, "")
 }
@@ -611,6 +720,17 @@ func (this *EpochStartCrossChainData) GoString() string {
 	s = append(s, "}")
 	return strings.Join(s, "")
 }
+func (this *ChainData) GoString() string {
+	if this == nil {
+		return "nil"
+	}
+	s := make([]string, 0, 6)
+	s = append(s, "&block.ChainData{")
+	s = append(s, "ChainID: "+fmt.Sprintf("%#v", this.ChainID)+",\n")
+	s = append(s, "ExtendedShardHeaderHashes: "+fmt.Sprintf("%#v", this.ExtendedShardHeaderHashes)+",\n")
+	s = append(s, "}")
+	return strings.Join(s, "")
+}
 func (this *SovereignChainHeader) GoString() string {
 	if this == nil {
 		return "nil"
@@ -621,7 +741,13 @@ func (this *SovereignChainHeader) GoString() string {
 		s = append(s, "Header: "+fmt.Sprintf("%#v", this.Header)+",\n")
 	}
 	s = append(s, "ValidatorStatsRootHash: "+fmt.Sprintf("%#v", this.ValidatorStatsRootHash)+",\n")
-	s = append(s, "ExtendedShardHeaderHashes: "+fmt.Sprintf("%#v", this.ExtendedShardHeaderHashes)+",\n")
+	if this.ChainsData != nil {
+		vs := make([]ChainData, len(this.ChainsData))
+		for i := range vs {
+			vs[i] = this.ChainsData[i]
+		}
+		s = append(s, "ChainsData: "+fmt.Sprintf("%#v", vs)+",\n")
+	}
 	if this.OutGoingMiniBlockHeaders != nil {
 		s = append(s, "OutGoingMiniBlockHeaders: "+fmt.Sprintf("%#v", this.OutGoingMiniBlockHeaders)+",\n")
 	}
@@ -636,10 +762,11 @@ func (this *OutGoingMiniBlockHeader) GoString() string {
 	if this == nil {
 		return "nil"
 	}
-	s := make([]string, 0, 9)
+	s := make([]string, 0, 10)
 	s = append(s, "&block.OutGoingMiniBlockHeader{")
 	s = append(s, "Type: "+fmt.Sprintf("%#v", this.Type)+",\n")
 	s = append(s, "Hash: "+fmt.Sprintf("%#v", this.Hash)+",\n")
+	s = append(s, "ChainID: "+fmt.Sprintf("%#v", this.ChainID)+",\n")
 	s = append(s, "OutGoingOperationsHash: "+fmt.Sprintf("%#v", this.OutGoingOperationsHash)+",\n")
 	s = append(s, "AggregatedSignatureOutGoingOperations: "+fmt.Sprintf("%#v", this.AggregatedSignatureOutGoingOperations)+",\n")
 	s = append(s, "LeaderSignatureOutGoingOperations: "+fmt.Sprintf("%#v", this.LeaderSignatureOutGoingOperations)+",\n")
@@ -674,16 +801,20 @@ func (m *EpochStartSovereign) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	_ = i
 	var l int
 	_ = l
-	{
-		size, err := m.LastFinalizedCrossChainHeader.MarshalToSizedBuffer(dAtA[:i])
-		if err != nil {
-			return 0, err
+	if len(m.LastFinalizedCrossChainHeader) > 0 {
+		for iNdEx := len(m.LastFinalizedCrossChainHeader) - 1; iNdEx >= 0; iNdEx-- {
+			{
+				size, err := m.LastFinalizedCrossChainHeader[iNdEx].MarshalToSizedBuffer(dAtA[:i])
+				if err != nil {
+					return 0, err
+				}
+				i -= size
+				i = encodeVarintSovereignChainHeader(dAtA, i, uint64(size))
+			}
+			i--
+			dAtA[i] = 0x12
 		}
-		i -= size
-		i = encodeVarintSovereignChainHeader(dAtA, i, uint64(size))
 	}
-	i--
-	dAtA[i] = 0x12
 	{
 		size, err := m.Economics.MarshalToSizedBuffer(dAtA[:i])
 		if err != nil {
@@ -741,6 +872,43 @@ func (m *EpochStartCrossChainData) MarshalToSizedBuffer(dAtA []byte) (int, error
 	}
 	if m.ShardID != 0 {
 		i = encodeVarintSovereignChainHeader(dAtA, i, uint64(m.ShardID))
+		i--
+		dAtA[i] = 0x8
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *ChainData) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *ChainData) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *ChainData) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if len(m.ExtendedShardHeaderHashes) > 0 {
+		for iNdEx := len(m.ExtendedShardHeaderHashes) - 1; iNdEx >= 0; iNdEx-- {
+			i -= len(m.ExtendedShardHeaderHashes[iNdEx])
+			copy(dAtA[i:], m.ExtendedShardHeaderHashes[iNdEx])
+			i = encodeVarintSovereignChainHeader(dAtA, i, uint64(len(m.ExtendedShardHeaderHashes[iNdEx])))
+			i--
+			dAtA[i] = 0x12
+		}
+	}
+	if m.ChainID != 0 {
+		i = encodeVarintSovereignChainHeader(dAtA, i, uint64(m.ChainID))
 		i--
 		dAtA[i] = 0x8
 	}
@@ -823,11 +991,16 @@ func (m *SovereignChainHeader) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 			dAtA[i] = 0x22
 		}
 	}
-	if len(m.ExtendedShardHeaderHashes) > 0 {
-		for iNdEx := len(m.ExtendedShardHeaderHashes) - 1; iNdEx >= 0; iNdEx-- {
-			i -= len(m.ExtendedShardHeaderHashes[iNdEx])
-			copy(dAtA[i:], m.ExtendedShardHeaderHashes[iNdEx])
-			i = encodeVarintSovereignChainHeader(dAtA, i, uint64(len(m.ExtendedShardHeaderHashes[iNdEx])))
+	if len(m.ChainsData) > 0 {
+		for iNdEx := len(m.ChainsData) - 1; iNdEx >= 0; iNdEx-- {
+			{
+				size, err := m.ChainsData[iNdEx].MarshalToSizedBuffer(dAtA[:i])
+				if err != nil {
+					return 0, err
+				}
+				i -= size
+				i = encodeVarintSovereignChainHeader(dAtA, i, uint64(size))
+			}
 			i--
 			dAtA[i] = 0x1a
 		}
@@ -879,21 +1052,26 @@ func (m *OutGoingMiniBlockHeader) MarshalToSizedBuffer(dAtA []byte) (int, error)
 		copy(dAtA[i:], m.LeaderSignatureOutGoingOperations)
 		i = encodeVarintSovereignChainHeader(dAtA, i, uint64(len(m.LeaderSignatureOutGoingOperations)))
 		i--
-		dAtA[i] = 0x2a
+		dAtA[i] = 0x32
 	}
 	if len(m.AggregatedSignatureOutGoingOperations) > 0 {
 		i -= len(m.AggregatedSignatureOutGoingOperations)
 		copy(dAtA[i:], m.AggregatedSignatureOutGoingOperations)
 		i = encodeVarintSovereignChainHeader(dAtA, i, uint64(len(m.AggregatedSignatureOutGoingOperations)))
 		i--
-		dAtA[i] = 0x22
+		dAtA[i] = 0x2a
 	}
 	if len(m.OutGoingOperationsHash) > 0 {
 		i -= len(m.OutGoingOperationsHash)
 		copy(dAtA[i:], m.OutGoingOperationsHash)
 		i = encodeVarintSovereignChainHeader(dAtA, i, uint64(len(m.OutGoingOperationsHash)))
 		i--
-		dAtA[i] = 0x1a
+		dAtA[i] = 0x22
+	}
+	if m.ChainID != 0 {
+		i = encodeVarintSovereignChainHeader(dAtA, i, uint64(m.ChainID))
+		i--
+		dAtA[i] = 0x18
 	}
 	if len(m.Hash) > 0 {
 		i -= len(m.Hash)
@@ -929,8 +1107,12 @@ func (m *EpochStartSovereign) Size() (n int) {
 	_ = l
 	l = m.Economics.Size()
 	n += 1 + l + sovSovereignChainHeader(uint64(l))
-	l = m.LastFinalizedCrossChainHeader.Size()
-	n += 1 + l + sovSovereignChainHeader(uint64(l))
+	if len(m.LastFinalizedCrossChainHeader) > 0 {
+		for _, e := range m.LastFinalizedCrossChainHeader {
+			l = e.Size()
+			n += 1 + l + sovSovereignChainHeader(uint64(l))
+		}
+	}
 	return n
 }
 
@@ -959,6 +1141,24 @@ func (m *EpochStartCrossChainData) Size() (n int) {
 	return n
 }
 
+func (m *ChainData) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if m.ChainID != 0 {
+		n += 1 + sovSovereignChainHeader(uint64(m.ChainID))
+	}
+	if len(m.ExtendedShardHeaderHashes) > 0 {
+		for _, b := range m.ExtendedShardHeaderHashes {
+			l = len(b)
+			n += 1 + l + sovSovereignChainHeader(uint64(l))
+		}
+	}
+	return n
+}
+
 func (m *SovereignChainHeader) Size() (n int) {
 	if m == nil {
 		return 0
@@ -973,9 +1173,9 @@ func (m *SovereignChainHeader) Size() (n int) {
 	if l > 0 {
 		n += 1 + l + sovSovereignChainHeader(uint64(l))
 	}
-	if len(m.ExtendedShardHeaderHashes) > 0 {
-		for _, b := range m.ExtendedShardHeaderHashes {
-			l = len(b)
+	if len(m.ChainsData) > 0 {
+		for _, e := range m.ChainsData {
+			l = e.Size()
 			n += 1 + l + sovSovereignChainHeader(uint64(l))
 		}
 	}
@@ -1016,6 +1216,9 @@ func (m *OutGoingMiniBlockHeader) Size() (n int) {
 	if l > 0 {
 		n += 1 + l + sovSovereignChainHeader(uint64(l))
 	}
+	if m.ChainID != 0 {
+		n += 1 + sovSovereignChainHeader(uint64(m.ChainID))
+	}
 	l = len(m.OutGoingOperationsHash)
 	if l > 0 {
 		n += 1 + l + sovSovereignChainHeader(uint64(l))
@@ -1041,9 +1244,14 @@ func (this *EpochStartSovereign) String() string {
 	if this == nil {
 		return "nil"
 	}
+	repeatedStringForLastFinalizedCrossChainHeader := "[]EpochStartCrossChainData{"
+	for _, f := range this.LastFinalizedCrossChainHeader {
+		repeatedStringForLastFinalizedCrossChainHeader += strings.Replace(strings.Replace(f.String(), "EpochStartCrossChainData", "EpochStartCrossChainData", 1), `&`, ``, 1) + ","
+	}
+	repeatedStringForLastFinalizedCrossChainHeader += "}"
 	s := strings.Join([]string{`&EpochStartSovereign{`,
 		`Economics:` + strings.Replace(strings.Replace(fmt.Sprintf("%v", this.Economics), "Economics", "Economics", 1), `&`, ``, 1) + `,`,
-		`LastFinalizedCrossChainHeader:` + strings.Replace(strings.Replace(this.LastFinalizedCrossChainHeader.String(), "EpochStartCrossChainData", "EpochStartCrossChainData", 1), `&`, ``, 1) + `,`,
+		`LastFinalizedCrossChainHeader:` + repeatedStringForLastFinalizedCrossChainHeader + `,`,
 		`}`,
 	}, "")
 	return s
@@ -1062,10 +1270,26 @@ func (this *EpochStartCrossChainData) String() string {
 	}, "")
 	return s
 }
+func (this *ChainData) String() string {
+	if this == nil {
+		return "nil"
+	}
+	s := strings.Join([]string{`&ChainData{`,
+		`ChainID:` + fmt.Sprintf("%v", this.ChainID) + `,`,
+		`ExtendedShardHeaderHashes:` + fmt.Sprintf("%v", this.ExtendedShardHeaderHashes) + `,`,
+		`}`,
+	}, "")
+	return s
+}
 func (this *SovereignChainHeader) String() string {
 	if this == nil {
 		return "nil"
 	}
+	repeatedStringForChainsData := "[]ChainData{"
+	for _, f := range this.ChainsData {
+		repeatedStringForChainsData += strings.Replace(strings.Replace(f.String(), "ChainData", "ChainData", 1), `&`, ``, 1) + ","
+	}
+	repeatedStringForChainsData += "}"
 	repeatedStringForOutGoingMiniBlockHeaders := "[]*OutGoingMiniBlockHeader{"
 	for _, f := range this.OutGoingMiniBlockHeaders {
 		repeatedStringForOutGoingMiniBlockHeaders += strings.Replace(f.String(), "OutGoingMiniBlockHeader", "OutGoingMiniBlockHeader", 1) + ","
@@ -1074,7 +1298,7 @@ func (this *SovereignChainHeader) String() string {
 	s := strings.Join([]string{`&SovereignChainHeader{`,
 		`Header:` + strings.Replace(fmt.Sprintf("%v", this.Header), "Header", "Header", 1) + `,`,
 		`ValidatorStatsRootHash:` + fmt.Sprintf("%v", this.ValidatorStatsRootHash) + `,`,
-		`ExtendedShardHeaderHashes:` + fmt.Sprintf("%v", this.ExtendedShardHeaderHashes) + `,`,
+		`ChainsData:` + repeatedStringForChainsData + `,`,
 		`OutGoingMiniBlockHeaders:` + repeatedStringForOutGoingMiniBlockHeaders + `,`,
 		`IsStartOfEpoch:` + fmt.Sprintf("%v", this.IsStartOfEpoch) + `,`,
 		`AccumulatedFeesInEpoch:` + fmt.Sprintf("%v", this.AccumulatedFeesInEpoch) + `,`,
@@ -1091,6 +1315,7 @@ func (this *OutGoingMiniBlockHeader) String() string {
 	s := strings.Join([]string{`&OutGoingMiniBlockHeader{`,
 		`Type:` + fmt.Sprintf("%v", this.Type) + `,`,
 		`Hash:` + fmt.Sprintf("%v", this.Hash) + `,`,
+		`ChainID:` + fmt.Sprintf("%v", this.ChainID) + `,`,
 		`OutGoingOperationsHash:` + fmt.Sprintf("%v", this.OutGoingOperationsHash) + `,`,
 		`AggregatedSignatureOutGoingOperations:` + fmt.Sprintf("%v", this.AggregatedSignatureOutGoingOperations) + `,`,
 		`LeaderSignatureOutGoingOperations:` + fmt.Sprintf("%v", this.LeaderSignatureOutGoingOperations) + `,`,
@@ -1197,7 +1422,8 @@ func (m *EpochStartSovereign) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			if err := m.LastFinalizedCrossChainHeader.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+			m.LastFinalizedCrossChainHeader = append(m.LastFinalizedCrossChainHeader, EpochStartCrossChainData{})
+			if err := m.LastFinalizedCrossChainHeader[len(m.LastFinalizedCrossChainHeader)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err
 			}
 			iNdEx = postIndex
@@ -1388,6 +1614,110 @@ func (m *EpochStartCrossChainData) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
+func (m *ChainData) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowSovereignChainHeader
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: ChainData: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: ChainData: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field ChainID", wireType)
+			}
+			m.ChainID = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowSovereignChainHeader
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.ChainID |= dto.ChainID(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field ExtendedShardHeaderHashes", wireType)
+			}
+			var byteLen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowSovereignChainHeader
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				byteLen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if byteLen < 0 {
+				return ErrInvalidLengthSovereignChainHeader
+			}
+			postIndex := iNdEx + byteLen
+			if postIndex < 0 {
+				return ErrInvalidLengthSovereignChainHeader
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.ExtendedShardHeaderHashes = append(m.ExtendedShardHeaderHashes, make([]byte, postIndex-iNdEx))
+			copy(m.ExtendedShardHeaderHashes[len(m.ExtendedShardHeaderHashes)-1], dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipSovereignChainHeader(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthSovereignChainHeader
+			}
+			if (iNdEx + skippy) < 0 {
+				return ErrInvalidLengthSovereignChainHeader
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
 func (m *SovereignChainHeader) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
@@ -1489,9 +1819,9 @@ func (m *SovereignChainHeader) Unmarshal(dAtA []byte) error {
 			iNdEx = postIndex
 		case 3:
 			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field ExtendedShardHeaderHashes", wireType)
+				return fmt.Errorf("proto: wrong wireType = %d for field ChainsData", wireType)
 			}
-			var byteLen int
+			var msglen int
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowSovereignChainHeader
@@ -1501,23 +1831,25 @@ func (m *SovereignChainHeader) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				byteLen |= int(b&0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
-			if byteLen < 0 {
+			if msglen < 0 {
 				return ErrInvalidLengthSovereignChainHeader
 			}
-			postIndex := iNdEx + byteLen
+			postIndex := iNdEx + msglen
 			if postIndex < 0 {
 				return ErrInvalidLengthSovereignChainHeader
 			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.ExtendedShardHeaderHashes = append(m.ExtendedShardHeaderHashes, make([]byte, postIndex-iNdEx))
-			copy(m.ExtendedShardHeaderHashes[len(m.ExtendedShardHeaderHashes)-1], dAtA[iNdEx:postIndex])
+			m.ChainsData = append(m.ChainsData, ChainData{})
+			if err := m.ChainsData[len(m.ChainsData)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
 			iNdEx = postIndex
 		case 4:
 			if wireType != 2 {
@@ -1789,6 +2121,25 @@ func (m *OutGoingMiniBlockHeader) Unmarshal(dAtA []byte) error {
 			}
 			iNdEx = postIndex
 		case 3:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field ChainID", wireType)
+			}
+			m.ChainID = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowSovereignChainHeader
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.ChainID |= dto.ChainID(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 4:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field OutGoingOperationsHash", wireType)
 			}
@@ -1822,7 +2173,7 @@ func (m *OutGoingMiniBlockHeader) Unmarshal(dAtA []byte) error {
 				m.OutGoingOperationsHash = []byte{}
 			}
 			iNdEx = postIndex
-		case 4:
+		case 5:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field AggregatedSignatureOutGoingOperations", wireType)
 			}
@@ -1856,7 +2207,7 @@ func (m *OutGoingMiniBlockHeader) Unmarshal(dAtA []byte) error {
 				m.AggregatedSignatureOutGoingOperations = []byte{}
 			}
 			iNdEx = postIndex
-		case 5:
+		case 6:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field LeaderSignatureOutGoingOperations", wireType)
 			}

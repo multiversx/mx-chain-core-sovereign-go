@@ -5,10 +5,10 @@ import (
 	"fmt"
 	"math/big"
 
-	"github.com/multiversx/mx-chain-core-go/core"
 	"github.com/multiversx/mx-chain-core-go/core/check"
 	"github.com/multiversx/mx-chain-core-go/data"
 	"github.com/multiversx/mx-chain-core-go/data/headerVersionData"
+	"github.com/multiversx/mx-chain-core-go/data/sovereign/dto"
 )
 
 // GetAdditionalData returns nil for the sovereign chain header
@@ -413,13 +413,40 @@ func (sch *SovereignChainHeader) SetValidatorStatsRootHash(rootHash []byte) erro
 	return nil
 }
 
-// SetExtendedShardHeaderHashes sets the extended shard header hashes
-func (sch *SovereignChainHeader) SetExtendedShardHeaderHashes(hdrHashes [][]byte) error {
+// GetChainDataHandlers returns the chains data handler
+func (sch *SovereignChainHeader) GetChainDataHandlers() []data.ChainDataHandler {
+	if sch == nil {
+		return nil
+	}
+
+	ret := make([]data.ChainDataHandler, len(sch.ChainsData))
+
+	for idx, chainData := range sch.ChainsData {
+		copyChainData := chainData
+		ret[idx] = &copyChainData
+	}
+
+	return ret
+}
+
+// SetChainDataHandlers sets the chains data handler
+func (sch *SovereignChainHeader) SetChainDataHandlers(chainsData []data.ChainDataHandler) error {
 	if sch == nil {
 		return data.ErrNilPointerReceiver
 	}
 
-	sch.ExtendedShardHeaderHashes = hdrHashes
+	sch.ChainsData = make([]ChainData, len(chainsData))
+	for idx, chainDataHandler := range chainsData {
+		chainData, castOk := chainDataHandler.(*ChainData)
+		if !castOk {
+			return fmt.Errorf("%w in SetChainDataHandlers, idx: %d", data.ErrWrongTypeAssertion, idx)
+		}
+		if chainData == nil {
+			return fmt.Errorf("%w in SetChainDataHandlers, idx: %d", data.ErrNilPointerDereference, idx)
+		}
+
+		sch.ChainsData[idx] = *chainData
+	}
 
 	return nil
 }
@@ -576,14 +603,30 @@ func (sch *SovereignChainHeader) GetOutGoingMiniBlockHeaderHandlers() []data.Out
 	return mbHeaderHandlers
 }
 
-// GetOutGoingMiniBlockHeaderHandler returns the outgoing mb header with specified type, if found
-func (sch *SovereignChainHeader) GetOutGoingMiniBlockHeaderHandler(mbType int32) data.OutGoingMiniBlockHeaderHandler {
+// GetOutGoingMiniBlockHeaderHandlersWithType returns the outgoing mb headers with specified type, if found
+func (sch *SovereignChainHeader) GetOutGoingMiniBlockHeaderHandlersWithType(mbType int32) []data.OutGoingMiniBlockHeaderHandler {
+	if sch == nil {
+		return nil
+	}
+
+	ret := make([]data.OutGoingMiniBlockHeaderHandler, 0)
+	for _, outGoingMbHdr := range sch.OutGoingMiniBlockHeaders {
+		if int32(outGoingMbHdr.Type) == mbType {
+			ret = append(ret, outGoingMbHdr)
+		}
+	}
+
+	return ret
+}
+
+// GetOutGoingMiniBlockHeaderHandlerToChain returns the outgoing mb header handler with specified type and chain id
+func (sch *SovereignChainHeader) GetOutGoingMiniBlockHeaderHandlerToChain(mbType int32, chainID dto.ChainID) data.OutGoingMiniBlockHeaderHandler {
 	if sch == nil {
 		return nil
 	}
 
 	for _, outGoingMbHdr := range sch.OutGoingMiniBlockHeaders {
-		if int32(outGoingMbHdr.Type) == mbType {
+		if int32(outGoingMbHdr.Type) == mbType && outGoingMbHdr.ChainID == chainID {
 			return outGoingMbHdr
 		}
 	}
@@ -591,7 +634,7 @@ func (sch *SovereignChainHeader) GetOutGoingMiniBlockHeaderHandler(mbType int32)
 	return nil
 }
 
-// SetOutGoingMiniBlockHeaderHandler replaces the outgoing mb based on its type, if found.
+// SetOutGoingMiniBlockHeaderHandler replaces the outgoing mb based on its type and chain, if found.
 // Otherwise, it adds it add the end of the slice.
 func (sch *SovereignChainHeader) SetOutGoingMiniBlockHeaderHandler(mbHeader data.OutGoingMiniBlockHeaderHandler) error {
 	if sch == nil {
@@ -602,9 +645,13 @@ func (sch *SovereignChainHeader) SetOutGoingMiniBlockHeaderHandler(mbHeader data
 		return data.ErrNilOutGoingMiniBlockHeaderHandlerProvided
 	}
 
-	outGoingMbHdr := createOutGoingMbHeader(mbHeader)
+	outGoingMbHdr, err := createOutGoingMbHeader(mbHeader)
+	if err != nil {
+		return err
+	}
+
 	for idx, currOutGoingMbHdr := range sch.OutGoingMiniBlockHeaders {
-		if int32(currOutGoingMbHdr.Type) == mbHeader.GetOutGoingMBTypeInt32() {
+		if int32(currOutGoingMbHdr.Type) == mbHeader.GetOutGoingMBTypeInt32() && currOutGoingMbHdr.ChainID == mbHeader.GetChainID() {
 			sch.OutGoingMiniBlockHeaders[idx] = outGoingMbHdr
 			return nil
 		}
@@ -614,14 +661,17 @@ func (sch *SovereignChainHeader) SetOutGoingMiniBlockHeaderHandler(mbHeader data
 	return nil
 }
 
-func createOutGoingMbHeader(mbHeader data.OutGoingMiniBlockHeaderHandler) *OutGoingMiniBlockHeader {
-	return &OutGoingMiniBlockHeader{
-		Type:                                  OutGoingMBType(mbHeader.GetOutGoingMBTypeInt32()),
-		Hash:                                  mbHeader.GetHash(),
-		OutGoingOperationsHash:                mbHeader.GetOutGoingOperationsHash(),
-		AggregatedSignatureOutGoingOperations: mbHeader.GetAggregatedSignatureOutGoingOperations(),
-		LeaderSignatureOutGoingOperations:     mbHeader.GetLeaderSignatureOutGoingOperations(),
+func createOutGoingMbHeader(mbHeader data.OutGoingMiniBlockHeaderHandler) (*OutGoingMiniBlockHeader, error) {
+	outGoingMbHdr, castOk := mbHeader.(*OutGoingMiniBlockHeader)
+	if !castOk {
+		return nil, fmt.Errorf("%w in createOutGoingMbHeader", data.ErrWrongTypeAssertion)
 	}
+	if check.IfNil(outGoingMbHdr) {
+		return nil, fmt.Errorf("%w in createOutGoingMbHeader", data.ErrNilPointerDereference)
+	}
+
+	outGoingMbCopy := *outGoingMbHdr
+	return &outGoingMbCopy, nil
 }
 
 // SetOutGoingMiniBlockHeaderHandlers sets the outgoing mini block headers
@@ -635,9 +685,13 @@ func (sch *SovereignChainHeader) SetOutGoingMiniBlockHeaderHandlers(mbHeaders []
 		return nil
 	}
 
+	var err error
 	miniBlockHeaders := make([]*OutGoingMiniBlockHeader, len(mbHeaders))
 	for i, mbHeaderHandler := range mbHeaders {
-		miniBlockHeaders[i] = createOutGoingMbHeader(mbHeaderHandler)
+		miniBlockHeaders[i], err = createOutGoingMbHeader(mbHeaderHandler)
+		if err != nil {
+			return err
+		}
 	}
 
 	sch.OutGoingMiniBlockHeaders = miniBlockHeaders
@@ -704,32 +758,6 @@ func (sch *SovereignChainHeader) GetEpochStartHandler() data.EpochStartHandler {
 	}
 
 	return &sch.EpochStart
-}
-
-// GetLastFinalizedCrossChainHeaderHandler returns the last finalized cross chain header data
-func (sch *SovereignChainHeader) GetLastFinalizedCrossChainHeaderHandler() data.EpochStartChainDataHandler {
-	if sch == nil {
-		return nil
-	}
-
-	return &sch.EpochStart.LastFinalizedCrossChainHeader
-}
-
-// SetLastFinalizedCrossChainHeaderHandler sets the last finalized cross chain header handler
-func (sch *SovereignChainHeader) SetLastFinalizedCrossChainHeaderHandler(crossChainData data.EpochStartChainDataHandler) error {
-	if sch == nil {
-		return data.ErrNilPointerReceiver
-	}
-
-	sch.EpochStart.LastFinalizedCrossChainHeader = EpochStartCrossChainData{
-		ShardID:    crossChainData.GetShardID(),
-		Epoch:      crossChainData.GetEpoch(),
-		Round:      crossChainData.GetRound(),
-		Nonce:      crossChainData.GetNonce(),
-		HeaderHash: crossChainData.GetHeaderHash(),
-	}
-
-	return nil
 }
 
 // GetShardInfoHandlers returns empty slice
@@ -806,6 +834,16 @@ func (omb *OutGoingMiniBlockHeader) SetOutGoingMBTypeInt32(mbType int32) error {
 	}
 
 	omb.Type = OutGoingMBType(mbType)
+	return nil
+}
+
+// SetChainID sets the chain id
+func (omb *OutGoingMiniBlockHeader) SetChainID(chainID dto.ChainID) error {
+	if omb == nil {
+		return data.ErrNilPointerReceiver
+	}
+
+	omb.ChainID = chainID
 	return nil
 }
 
@@ -909,15 +947,16 @@ func (essd *EpochStartCrossChainData) SetPendingMiniBlockHeaders(_ []data.MiniBl
 	return nil
 }
 
-// GetLastFinalizedHeaderHandlers returns last cross main chain finalized header in a slice w.r.t to the interface
+// GetLastFinalizedHeaderHandlers returns last cross main chains finalized header in a slice w.r.t to the interface
 func (m *EpochStartSovereign) GetLastFinalizedHeaderHandlers() []data.EpochStartShardDataHandler {
 	if m == nil {
 		return nil
 	}
 
-	epochStartShardData := make([]data.EpochStartShardDataHandler, 0)
-	if m.LastFinalizedCrossChainHeader.ShardID == core.MainChainShardId {
-		epochStartShardData = append(epochStartShardData, &m.LastFinalizedCrossChainHeader)
+	epochStartShardData := make([]data.EpochStartShardDataHandler, len(m.LastFinalizedCrossChainHeader))
+
+	for i := range m.LastFinalizedCrossChainHeader {
+		epochStartShardData[i] = &m.LastFinalizedCrossChainHeader[i]
 	}
 
 	return epochStartShardData
@@ -932,23 +971,26 @@ func (m *EpochStartSovereign) GetEconomicsHandler() data.EconomicsHandler {
 	return &m.Economics
 }
 
-// SetLastFinalizedHeaders sets epoch start data for main chain chain only
+// SetLastFinalizedHeaders sets epoch start data for multiple chains
 func (m *EpochStartSovereign) SetLastFinalizedHeaders(epochStartShardDataHandlers []data.EpochStartShardDataHandler) error {
 	if m == nil {
 		return data.ErrNilPointerReceiver
 	}
 
-	for _, epochStartShardData := range epochStartShardDataHandlers {
-		if epochStartShardData.GetShardID() == core.MainChainShardId {
-			m.LastFinalizedCrossChainHeader = EpochStartCrossChainData{
-				ShardID:    epochStartShardData.GetShardID(),
-				Epoch:      epochStartShardData.GetEpoch(),
-				Round:      epochStartShardData.GetRound(),
-				Nonce:      epochStartShardData.GetNonce(),
-				HeaderHash: epochStartShardData.GetHeaderHash(),
-			}
+	epochStartData := make([]EpochStartCrossChainData, len(epochStartShardDataHandlers))
+	for i, epochStartChainData := range epochStartShardDataHandlers {
+		chainData, ok := epochStartChainData.(*EpochStartCrossChainData)
+		if !ok {
+			return fmt.Errorf("%w in EpochStartSovereign.SetLastFinalizedHeaders", data.ErrInvalidTypeAssertion)
 		}
+		if chainData == nil {
+			return fmt.Errorf("%w in EpochStartSovereign.SetLastFinalizedHeaders", data.ErrNilPointerDereference)
+		}
+
+		epochStartData[i] = *chainData
 	}
+
+	m.LastFinalizedCrossChainHeader = epochStartData
 
 	return nil
 }
@@ -969,5 +1011,25 @@ func (m *EpochStartSovereign) SetEconomics(economicsHandler data.EconomicsHandle
 
 	m.Economics = *ec
 
+	return nil
+}
+
+// SetExtendedShardHeaderHashes sets the extended shard header hashes
+func (m *ChainData) SetExtendedShardHeaderHashes(hdrHashes [][]byte) error {
+	if m == nil {
+		return data.ErrNilPointerReceiver
+	}
+
+	m.ExtendedShardHeaderHashes = hdrHashes
+	return nil
+}
+
+// SetChainID sets the chain id
+func (m *ChainData) SetChainID(chainID dto.ChainID) error {
+	if m == nil {
+		return data.ErrNilPointerReceiver
+	}
+
+	m.ChainID = chainID
 	return nil
 }

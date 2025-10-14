@@ -6,8 +6,8 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"github.com/multiversx/mx-chain-core-go/core"
 	"github.com/multiversx/mx-chain-core-go/data"
+	"github.com/multiversx/mx-chain-core-go/data/sovereign/dto"
 )
 
 func TestSovereignChainHeader_GetEpochStartHandler(t *testing.T) {
@@ -17,11 +17,12 @@ func TestSovereignChainHeader_GetEpochStartHandler(t *testing.T) {
 		NodePrice: big.NewInt(100),
 	}
 	epochStartData := EpochStartCrossChainData{
-		Round: 4,
+		ShardID: uint32(dto.ETH),
+		Round:   4,
 	}
 	epochStartSov := EpochStartSovereign{
 		Economics:                     economics,
-		LastFinalizedCrossChainHeader: epochStartData,
+		LastFinalizedCrossChainHeader: []EpochStartCrossChainData{epochStartData},
 	}
 	sovHdr := &SovereignChainHeader{
 		EpochStart: epochStartSov,
@@ -29,20 +30,22 @@ func TestSovereignChainHeader_GetEpochStartHandler(t *testing.T) {
 
 	require.Equal(t, &epochStartSov, sovHdr.GetEpochStartHandler())
 	require.Equal(t, &economics, sovHdr.GetEpochStartHandler().GetEconomicsHandler())
-	require.Empty(t, sovHdr.GetEpochStartHandler().GetLastFinalizedHeaderHandlers())
+	require.Equal(t, []data.EpochStartShardDataHandler{&epochStartData}, sovHdr.GetEpochStartHandler().GetLastFinalizedHeaderHandlers())
 
-	epochStartData.ShardID = 8
+	epochStartData.ShardID = uint32(dto.MVX)
+	epochStartSov.LastFinalizedCrossChainHeader = []EpochStartCrossChainData{epochStartData}
 	err := sovHdr.GetEpochStartHandler().SetLastFinalizedHeaders([]data.EpochStartShardDataHandler{&epochStartData})
 	require.Nil(t, err)
-	require.Empty(t, sovHdr.GetEpochStartHandler().GetLastFinalizedHeaderHandlers())
-
-	epochStartData.ShardID = core.MainChainShardId
-	epochStartSov.LastFinalizedCrossChainHeader = epochStartData
-	err = sovHdr.GetEpochStartHandler().SetLastFinalizedHeaders([]data.EpochStartShardDataHandler{&epochStartData})
-	require.Nil(t, err)
-
 	require.Equal(t, []data.EpochStartShardDataHandler{&epochStartData}, sovHdr.GetEpochStartHandler().GetLastFinalizedHeaderHandlers())
 	require.Equal(t, &epochStartSov, sovHdr.GetEpochStartHandler())
+
+	epochStartData2 := EpochStartCrossChainData{
+		ShardID: uint32(dto.SUI),
+		Round:   5,
+	}
+	err = sovHdr.GetEpochStartHandler().SetLastFinalizedHeaders([]data.EpochStartShardDataHandler{&epochStartData, &epochStartData2})
+	require.Nil(t, err)
+	require.Equal(t, []data.EpochStartShardDataHandler{&epochStartData, &epochStartData2}, sovHdr.GetEpochStartHandler().GetLastFinalizedHeaderHandlers())
 }
 
 func TestSovereignChainHeader_GetEconomicsHandler(t *testing.T) {
@@ -153,21 +156,28 @@ func TestSovereignChainHeader_GetOutGoingMiniBlockHeaderHandler(t *testing.T) {
 	sovHdr := &SovereignChainHeader{
 		OutGoingMiniBlockHeaders: []*OutGoingMiniBlockHeader{
 			{
-				Type: OutGoingMbDeposit,
-				Hash: []byte("h1"),
+				ChainID: dto.MVX,
+				Type:    OutGoingMbDeposit,
+				Hash:    []byte("h1"),
 			},
 			{
-				Type: OutGoingMbChangeValidatorSet,
-				Hash: []byte("h2"),
+				ChainID: dto.ETH,
+				Type:    OutGoingMbDeposit,
+				Hash:    []byte("h2"),
+			},
+			{
+				ChainID: dto.MVX,
+				Type:    OutGoingMbChangeValidatorSet,
+				Hash:    []byte("h3"),
 			},
 		},
 	}
 
-	mb := sovHdr.GetOutGoingMiniBlockHeaderHandler(int32(OutGoingMbDeposit))
-	require.Equal(t, sovHdr.OutGoingMiniBlockHeaders[0], mb)
-	mb = sovHdr.GetOutGoingMiniBlockHeaderHandler(int32(OutGoingMbChangeValidatorSet))
-	require.Equal(t, sovHdr.OutGoingMiniBlockHeaders[1], mb)
-	require.Nil(t, sovHdr.GetOutGoingMiniBlockHeaderHandler(-1))
+	mbs := sovHdr.GetOutGoingMiniBlockHeaderHandlersWithType(int32(OutGoingMbDeposit))
+	require.Equal(t, []data.OutGoingMiniBlockHeaderHandler{sovHdr.OutGoingMiniBlockHeaders[0], sovHdr.OutGoingMiniBlockHeaders[1]}, mbs)
+	mbs = sovHdr.GetOutGoingMiniBlockHeaderHandlersWithType(int32(OutGoingMbChangeValidatorSet))
+	require.Equal(t, []data.OutGoingMiniBlockHeaderHandler{sovHdr.OutGoingMiniBlockHeaders[2]}, mbs)
+	require.Empty(t, sovHdr.GetOutGoingMiniBlockHeaderHandlersWithType(-1))
 }
 
 func TestSovereignChainHeader_SetOutGoingMiniBlockHeaderHandlers(t *testing.T) {
