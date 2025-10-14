@@ -162,7 +162,7 @@ func TestSovereignChainHeader_GetOutGoingMiniBlockHeaderHandler(t *testing.T) {
 			},
 			{
 				ChainID: dto.ETH,
-				Type:    OutGoingMbTx,
+				Type:    OutGoingMbDeposit,
 				Hash:    []byte("h2"),
 			},
 			{
