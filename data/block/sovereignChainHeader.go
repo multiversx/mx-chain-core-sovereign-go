@@ -603,19 +603,20 @@ func (sch *SovereignChainHeader) GetOutGoingMiniBlockHeaderHandlers() []data.Out
 	return mbHeaderHandlers
 }
 
-// GetOutGoingMiniBlockHeaderHandler returns the outgoing mb header with specified type, if found
-func (sch *SovereignChainHeader) GetOutGoingMiniBlockHeaderHandler(mbType int32) data.OutGoingMiniBlockHeaderHandler {
+// GetOutGoingMiniBlockHeaderHandlersWithType returns the outgoing mb headers with specified type, if found
+func (sch *SovereignChainHeader) GetOutGoingMiniBlockHeaderHandlersWithType(mbType int32) []data.OutGoingMiniBlockHeaderHandler {
 	if sch == nil {
 		return nil
 	}
 
+	ret := make([]data.OutGoingMiniBlockHeaderHandler, 0)
 	for _, outGoingMbHdr := range sch.OutGoingMiniBlockHeaders {
 		if int32(outGoingMbHdr.Type) == mbType {
-			return outGoingMbHdr
+			ret = append(ret, outGoingMbHdr)
 		}
 	}
 
-	return nil
+	return ret
 }
 
 // GetOutGoingMiniBlockHeaderHandlerToChain returns the outgoing mb header handler with specified type and chain id

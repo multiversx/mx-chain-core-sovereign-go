@@ -16,11 +16,8 @@ func (she *ShardHeaderExtended) GetShardID() uint32 {
 	if she == nil {
 		return 0
 	}
-	if she.Header == nil {
-		return 0
-	}
 
-	return she.Header.GetShardID()
+	return uint32(she.GetSourceChainID())
 }
 
 // GetNonce returns the header nonce
