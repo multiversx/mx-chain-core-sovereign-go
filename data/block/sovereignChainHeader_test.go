@@ -153,7 +153,7 @@ func TestSovereignChainHeader_GetOutGoingMiniBlockHeaderHandler(t *testing.T) {
 	sovHdr := &SovereignChainHeader{
 		OutGoingMiniBlockHeaders: []*OutGoingMiniBlockHeader{
 			{
-				Type: OutGoingMbTx,
+				Type: OutGoingMbDeposit,
 				Hash: []byte("h1"),
 			},
 			{
@@ -163,7 +163,7 @@ func TestSovereignChainHeader_GetOutGoingMiniBlockHeaderHandler(t *testing.T) {
 		},
 	}
 
-	mb := sovHdr.GetOutGoingMiniBlockHeaderHandler(int32(OutGoingMbTx))
+	mb := sovHdr.GetOutGoingMiniBlockHeaderHandler(int32(OutGoingMbDeposit))
 	require.Equal(t, sovHdr.OutGoingMiniBlockHeaders[0], mb)
 	mb = sovHdr.GetOutGoingMiniBlockHeaderHandler(int32(OutGoingMbChangeValidatorSet))
 	require.Equal(t, sovHdr.OutGoingMiniBlockHeaders[1], mb)
@@ -174,7 +174,7 @@ func TestSovereignChainHeader_SetOutGoingMiniBlockHeaderHandlers(t *testing.T) {
 	t.Parallel()
 
 	sovHdr := &SovereignChainHeader{}
-	mbHeader1 := &OutGoingMiniBlockHeader{Type: OutGoingMbTx, Hash: []byte("h1")}
+	mbHeader1 := &OutGoingMiniBlockHeader{Type: OutGoingMbDeposit, Hash: []byte("h1")}
 	mbHeader2 := &OutGoingMiniBlockHeader{Type: OutGoingMbChangeValidatorSet, Hash: []byte("h2")}
 
 	err := sovHdr.SetOutGoingMiniBlockHeaderHandlers([]data.OutGoingMiniBlockHeaderHandler{mbHeader1, mbHeader2})
@@ -189,8 +189,8 @@ func TestSovereignChainHeader_SetOutGoingMiniBlockHeaderHandler(t *testing.T) {
 	t.Parallel()
 
 	sovHdr := &SovereignChainHeader{}
-	mbHeader1 := &OutGoingMiniBlockHeader{Type: OutGoingMbTx, Hash: []byte("h1")}
-	mbHeader2 := &OutGoingMiniBlockHeader{Type: OutGoingMbTx, Hash: []byte("h2")}
+	mbHeader1 := &OutGoingMiniBlockHeader{Type: OutGoingMbDeposit, Hash: []byte("h1")}
+	mbHeader2 := &OutGoingMiniBlockHeader{Type: OutGoingMbDeposit, Hash: []byte("h2")}
 	mbHeader3 := &OutGoingMiniBlockHeader{Type: OutGoingMbChangeValidatorSet, Hash: []byte("h3")}
 
 	err := sovHdr.SetOutGoingMiniBlockHeaderHandler(mbHeader1)

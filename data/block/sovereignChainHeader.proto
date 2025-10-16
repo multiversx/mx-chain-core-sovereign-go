@@ -38,8 +38,11 @@ message SovereignChainHeader {
 }
 
 enum OutGoingMBType {
-  OutGoingMbTx = 0;
+  OutGoingMbDeposit = 0;
   OutGoingMbChangeValidatorSet = 30;
+  OutGoingMBRegisterToken = 60;
+  OutGoingMBRegisterBlsKey = 90;
+  OutGoingMBUnRegisterBlsKey = 120;
 };
 
 message OutGoingMiniBlockHeader {
