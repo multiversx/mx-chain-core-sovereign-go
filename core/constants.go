@@ -128,6 +128,18 @@ const BuiltInFunctionUnGuardAccount = "UnGuardAccount"
 // BuiltInFunctionMigrateDataTrie is the built-in function key for migrating the data trie
 const BuiltInFunctionMigrateDataTrie = "MigrateDataTrie"
 
+// BuiltInFunctionEthereumToMultiversXEncodingWithMultiversXSignature is the built-in function key for converting arguments from the Ethereum encoding to the MultiversX encoding, given a MultiversX signature
+const BuiltInFunctionEthereumToMultiversXEncodingWithMultiversXSignature = "EthereumToMultiversXEncodingWithMultiversXSignature"
+
+// BuiltInFunctionEthereumToMultiversXEncodingWithEthereumSignature is the built-in function key for converting arguments from the Ethereum encoding to the MultiversX encoding, given an Ethereum signature
+const BuiltInFunctionEthereumToMultiversXEncodingWithEthereumSignature = "EthereumToMultiversXEncodingWithEthereumSignature"
+
+// BuiltInFunctionMultiversXToEthereumEncodingWithMultiversXSignature is the built-in function key for converting arguments from the MultiversX encoding to the Ethereum encoding, given a MultiversX signature
+const BuiltInFunctionMultiversXToEthereumEncodingWithMultiversXSignature = "MultiversXToEthereumEncodingWithMultiversXSignature"
+
+// BuiltInFunctionMultiversXToEthereumEncodingWithEthereumSignature is the built-in function key for converting arguments from the MultiversX encoding to the Ethereum encoding, given an Ethereum signature
+const BuiltInFunctionMultiversXToEthereumEncodingWithEthereumSignature = "MultiversXToEthereumEncodingWithEthereumSignature"
+
 // ESDTSetTokenType represents the builtin function name to set token type
 const ESDTSetTokenType = "ESDTSetTokenType"
 
@@ -352,6 +364,9 @@ const InitialVersionOfTransaction = uint32(1)
 
 // DefaultAddressPrefix is the default hrp of MultiversX/Elrond
 const DefaultAddressPrefix = "erd"
+
+// OneAddressPrefix is the default hrp of OneFinity
+const OneAddressPrefix = "one"
 
 // TopicRequestSuffix represents the topic name suffix for requests
 const TopicRequestSuffix = "_REQUEST"
