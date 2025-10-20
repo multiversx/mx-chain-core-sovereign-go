@@ -36,6 +36,31 @@ func (tx *Transaction) SetSndAddr(addr []byte) {
 	tx.SndAddr = addr
 }
 
+// SetGasLimit sets the gas limit of the transaction
+func (tx *Transaction) SetGasLimit(gasLimit uint64) {
+	tx.GasLimit = gasLimit
+}
+
+// SetGasPrice sets the gas price of the transaction
+func (tx *Transaction) SetGasPrice(gasPrice uint64) {
+	tx.GasPrice = gasPrice
+}
+
+// SetSignature sets the signature of the transaction
+func (tx *Transaction) SetSignature(signature []byte) {
+	tx.Signature = signature
+}
+
+// SetGuardianAddr sets the guardian address of the transaction
+func (tx *Transaction) SetGuardianAddr(addr []byte) {
+	tx.GuardianAddr = addr
+}
+
+// SetGuardianSignature sets the guardian signature of the transaction
+func (tx *Transaction) SetGuardianSignature(signature []byte) {
+	tx.GuardianSignature = signature
+}
+
 // TrimSlicePtr creates a copy of the provided slice without the excess capacity
 func TrimSlicePtr(in []*Transaction) []*Transaction {
 	if len(in) == 0 {
