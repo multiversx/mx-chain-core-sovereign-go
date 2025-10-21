@@ -576,19 +576,25 @@ func (sch *SovereignChainHeader) GetOutGoingMiniBlockHeaderHandlers() []data.Out
 	return mbHeaderHandlers
 }
 
-// GetOutGoingMiniBlockHeaderHandler returns the outgoing mb header with specified type, if found
-func (sch *SovereignChainHeader) GetOutGoingMiniBlockHeaderHandler(mbType int32) data.OutGoingMiniBlockHeaderHandler {
+// GetOutGoingMiniBlockHeaderHandler returns the outgoing mb header with specified chain id, if found
+func (sch *SovereignChainHeader) GetOutGoingMiniBlockHeaderHandler(_ int32) data.OutGoingMiniBlockHeaderHandler {
 	if sch == nil {
 		return nil
 	}
 
-	for _, outGoingMbHdr := range sch.OutGoingMiniBlockHeaders {
-		if int32(outGoingMbHdr.Type) == mbType {
-			return outGoingMbHdr
-		}
+	// TODO: Marius C: Here, leave this code placeholder for feat/multi-chain when we will
+	// only have multiple outgoing mbs for multiple chains.
+	//for _, outGoingMbHdr := range sch.OutGoingMiniBlockHeaders {
+	//if int32(outGoingMbHdr.ChainID) == chainID {
+	//	return outGoingMbHdr
+	//}
+	//}
+
+	if len(sch.GetOutGoingMiniBlockHeaders()) == 0 {
+		return nil
 	}
 
-	return nil
+	return sch.GetOutGoingMiniBlockHeaders()[0]
 }
 
 // SetOutGoingMiniBlockHeaderHandler replaces the outgoing mb based on its type, if found.
@@ -602,12 +608,11 @@ func (sch *SovereignChainHeader) SetOutGoingMiniBlockHeaderHandler(mbHeader data
 		return data.ErrNilOutGoingMiniBlockHeaderHandlerProvided
 	}
 
+	// TODO: Marius C: Here, we should replace this with a for loop to set the specific chain ID outgoing mb
 	outGoingMbHdr := createOutGoingMbHeader(mbHeader)
-	for idx, currOutGoingMbHdr := range sch.OutGoingMiniBlockHeaders {
-		if int32(currOutGoingMbHdr.Type) == mbHeader.GetOutGoingMBTypeInt32() {
-			sch.OutGoingMiniBlockHeaders[idx] = outGoingMbHdr
-			return nil
-		}
+	if len(sch.OutGoingMiniBlockHeaders) == 1 {
+		sch.OutGoingMiniBlockHeaders[0] = outGoingMbHdr
+		return nil
 	}
 
 	sch.OutGoingMiniBlockHeaders = append(sch.OutGoingMiniBlockHeaders, outGoingMbHdr)
@@ -616,7 +621,6 @@ func (sch *SovereignChainHeader) SetOutGoingMiniBlockHeaderHandler(mbHeader data
 
 func createOutGoingMbHeader(mbHeader data.OutGoingMiniBlockHeaderHandler) *OutGoingMiniBlockHeader {
 	return &OutGoingMiniBlockHeader{
-		Type:                                  OutGoingMBType(mbHeader.GetOutGoingMBTypeInt32()),
 		Hash:                                  mbHeader.GetHash(),
 		OutGoingOperationsHash:                mbHeader.GetOutGoingOperationsHash(),
 		AggregatedSignatureOutGoingOperations: mbHeader.GetAggregatedSignatureOutGoingOperations(),
@@ -796,7 +800,8 @@ func (omb *OutGoingMiniBlockHeader) GetOutGoingMBTypeInt32() int32 {
 		return 0
 	}
 
-	return int32(omb.Type)
+	// TODO: Marius C: Here, this should only return the outgoing mb chain ID
+	return 0
 }
 
 // SetOutGoingMBTypeInt32 sets the mini block type
@@ -805,7 +810,7 @@ func (omb *OutGoingMiniBlockHeader) SetOutGoingMBTypeInt32(mbType int32) error {
 		return data.ErrNilPointerReceiver
 	}
 
-	omb.Type = OutGoingMBType(mbType)
+	// TODO: Marius C: This should be a setter for chain ID
 	return nil
 }
 

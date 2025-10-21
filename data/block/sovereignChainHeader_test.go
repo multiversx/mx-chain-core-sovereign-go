@@ -153,29 +153,21 @@ func TestSovereignChainHeader_GetOutGoingMiniBlockHeaderHandler(t *testing.T) {
 	sovHdr := &SovereignChainHeader{
 		OutGoingMiniBlockHeaders: []*OutGoingMiniBlockHeader{
 			{
-				Type: OutGoingMbDeposit,
 				Hash: []byte("h1"),
-			},
-			{
-				Type: OutGoingMbChangeValidatorSet,
-				Hash: []byte("h2"),
 			},
 		},
 	}
 
-	mb := sovHdr.GetOutGoingMiniBlockHeaderHandler(int32(OutGoingMbDeposit))
+	mb := sovHdr.GetOutGoingMiniBlockHeaderHandler(0)
 	require.Equal(t, sovHdr.OutGoingMiniBlockHeaders[0], mb)
-	mb = sovHdr.GetOutGoingMiniBlockHeaderHandler(int32(OutGoingMbChangeValidatorSet))
-	require.Equal(t, sovHdr.OutGoingMiniBlockHeaders[1], mb)
-	require.Nil(t, sovHdr.GetOutGoingMiniBlockHeaderHandler(-1))
 }
 
 func TestSovereignChainHeader_SetOutGoingMiniBlockHeaderHandlers(t *testing.T) {
 	t.Parallel()
 
 	sovHdr := &SovereignChainHeader{}
-	mbHeader1 := &OutGoingMiniBlockHeader{Type: OutGoingMbDeposit, Hash: []byte("h1")}
-	mbHeader2 := &OutGoingMiniBlockHeader{Type: OutGoingMbChangeValidatorSet, Hash: []byte("h2")}
+	mbHeader1 := &OutGoingMiniBlockHeader{Hash: []byte("h1")}
+	mbHeader2 := &OutGoingMiniBlockHeader{Hash: []byte("h2")}
 
 	err := sovHdr.SetOutGoingMiniBlockHeaderHandlers([]data.OutGoingMiniBlockHeaderHandler{mbHeader1, mbHeader2})
 	require.Nil(t, err)
@@ -189,9 +181,8 @@ func TestSovereignChainHeader_SetOutGoingMiniBlockHeaderHandler(t *testing.T) {
 	t.Parallel()
 
 	sovHdr := &SovereignChainHeader{}
-	mbHeader1 := &OutGoingMiniBlockHeader{Type: OutGoingMbDeposit, Hash: []byte("h1")}
-	mbHeader2 := &OutGoingMiniBlockHeader{Type: OutGoingMbDeposit, Hash: []byte("h2")}
-	mbHeader3 := &OutGoingMiniBlockHeader{Type: OutGoingMbChangeValidatorSet, Hash: []byte("h3")}
+	mbHeader1 := &OutGoingMiniBlockHeader{Hash: []byte("h1")}
+	mbHeader2 := &OutGoingMiniBlockHeader{Hash: []byte("h2")}
 
 	err := sovHdr.SetOutGoingMiniBlockHeaderHandler(mbHeader1)
 	require.Nil(t, err)
@@ -204,13 +195,6 @@ func TestSovereignChainHeader_SetOutGoingMiniBlockHeaderHandler(t *testing.T) {
 	require.Nil(t, err)
 	require.Equal(t,
 		[]data.OutGoingMiniBlockHeaderHandler{mbHeader2},
-		sovHdr.GetOutGoingMiniBlockHeaderHandlers(),
-	)
-
-	err = sovHdr.SetOutGoingMiniBlockHeaderHandler(mbHeader3)
-	require.Nil(t, err)
-	require.Equal(t,
-		[]data.OutGoingMiniBlockHeaderHandler{mbHeader2, mbHeader3},
 		sovHdr.GetOutGoingMiniBlockHeaderHandlers(),
 	)
 }

@@ -46,10 +46,9 @@ enum OutGoingMBType {
 };
 
 message OutGoingMiniBlockHeader {
-  OutGoingMBType Type                                  = 1 [(gogoproto.jsontag) = "type,omitempty"];
-  bytes          Hash                                  = 2 [(gogoproto.jsontag) = "hash,omitempty"];
-  bytes          OutGoingOperationsHash                = 3 [(gogoproto.jsontag) = "outGoingOperationsHash,omitempty"];
-  bytes          AggregatedSignatureOutGoingOperations = 4 [(gogoproto.jsontag) = "aggregatedSignatureOutGoingOperations,omitempty"];
-  bytes          LeaderSignatureOutGoingOperations     = 5 [(gogoproto.jsontag) = "leaderSignatureOutGoingOperations,omitempty"];
+  bytes          Hash                                  = 1 [(gogoproto.jsontag) = "hash,omitempty"];
+  bytes          OutGoingOperationsHash                = 2 [(gogoproto.jsontag) = "outGoingOperationsHash,omitempty"];
+  bytes          AggregatedSignatureOutGoingOperations = 3 [(gogoproto.jsontag) = "aggregatedSignatureOutGoingOperations,omitempty"];
+  bytes          LeaderSignatureOutGoingOperations     = 4 [(gogoproto.jsontag) = "leaderSignatureOutGoingOperations,omitempty"];
 
 }
