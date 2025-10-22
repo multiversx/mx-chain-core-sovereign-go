@@ -150,13 +150,13 @@ type OutGoingMiniBlockHeaderHandler interface {
 	GetOutGoingOperationsHash() []byte
 	GetAggregatedSignatureOutGoingOperations() []byte
 	GetLeaderSignatureOutGoingOperations() []byte
-	GetOutGoingMBTypeInt32() int32
+	GetChainID() int32
 
 	SetHash(hash []byte) error
 	SetOutGoingOperationsHash(hash []byte) error
 	SetLeaderSignatureOutGoingOperations(sig []byte) error
 	SetAggregatedSignatureOutGoingOperations(sig []byte) error
-	SetOutGoingMBTypeInt32(mbType int32) error
+	SetChainID(chainID int32) error
 
 	IsInterfaceNil() bool
 }

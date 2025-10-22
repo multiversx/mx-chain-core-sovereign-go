@@ -158,6 +158,7 @@ func TestSovereignChainHeader_GetOutGoingMiniBlockHeaderHandler(t *testing.T) {
 		},
 	}
 
+	// TODO: Marius C.: MX-17260 Extend this test for multiple chain ids
 	mb := sovHdr.GetOutGoingMiniBlockHeaderHandler(0)
 	require.Equal(t, sovHdr.OutGoingMiniBlockHeaders[0], mb)
 }
@@ -169,6 +170,7 @@ func TestSovereignChainHeader_SetOutGoingMiniBlockHeaderHandlers(t *testing.T) {
 	mbHeader1 := &OutGoingMiniBlockHeader{Hash: []byte("h1")}
 	mbHeader2 := &OutGoingMiniBlockHeader{Hash: []byte("h2")}
 
+	// TODO: Marius C.: MX-17260 Extend this test for multiple chain ids
 	err := sovHdr.SetOutGoingMiniBlockHeaderHandlers([]data.OutGoingMiniBlockHeaderHandler{mbHeader1, mbHeader2})
 	require.Nil(t, err)
 	require.Equal(t,
@@ -184,6 +186,7 @@ func TestSovereignChainHeader_SetOutGoingMiniBlockHeaderHandler(t *testing.T) {
 	mbHeader1 := &OutGoingMiniBlockHeader{Hash: []byte("h1")}
 	mbHeader2 := &OutGoingMiniBlockHeader{Hash: []byte("h2")}
 
+	// TODO: Marius C.: MX-17260 Extend this test for multiple chain ids
 	err := sovHdr.SetOutGoingMiniBlockHeaderHandler(mbHeader1)
 	require.Nil(t, err)
 	require.Equal(t,

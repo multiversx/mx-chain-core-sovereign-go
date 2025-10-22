@@ -582,8 +582,7 @@ func (sch *SovereignChainHeader) GetOutGoingMiniBlockHeaderHandler(_ int32) data
 		return nil
 	}
 
-	// TODO: Marius C: Here, leave this code placeholder for feat/multi-chain when we will
-	// only have multiple outgoing mbs for multiple chains.
+	// TODO: Marius C: MX-17260 Here, leave this code placeholder for feat/multi-chain to loop through chain ids
 	//for _, outGoingMbHdr := range sch.OutGoingMiniBlockHeaders {
 	//if int32(outGoingMbHdr.ChainID) == chainID {
 	//	return outGoingMbHdr
@@ -597,7 +596,7 @@ func (sch *SovereignChainHeader) GetOutGoingMiniBlockHeaderHandler(_ int32) data
 	return sch.GetOutGoingMiniBlockHeaders()[0]
 }
 
-// SetOutGoingMiniBlockHeaderHandler replaces the outgoing mb based on its type, if found.
+// SetOutGoingMiniBlockHeaderHandler replaces the outgoing mb based on its chain id, if found.
 // Otherwise, it adds it add the end of the slice.
 func (sch *SovereignChainHeader) SetOutGoingMiniBlockHeaderHandler(mbHeader data.OutGoingMiniBlockHeaderHandler) error {
 	if sch == nil {
@@ -608,7 +607,7 @@ func (sch *SovereignChainHeader) SetOutGoingMiniBlockHeaderHandler(mbHeader data
 		return data.ErrNilOutGoingMiniBlockHeaderHandlerProvided
 	}
 
-	// TODO: Marius C: Here, we should replace this with a for loop to set the specific chain ID outgoing mb
+	// TODO: Marius C: MX-17260 Here, we should replace this with a for loop to set the specific chain ID outgoing mb
 	outGoingMbHdr := createOutGoingMbHeader(mbHeader)
 	if len(sch.OutGoingMiniBlockHeaders) == 1 {
 		sch.OutGoingMiniBlockHeaders[0] = outGoingMbHdr
@@ -794,23 +793,23 @@ func (omb *OutGoingMiniBlockHeader) SetAggregatedSignatureOutGoingOperations(sig
 	return nil
 }
 
-// GetOutGoingMBTypeInt32 returns the outgoing mb header type as int32
-func (omb *OutGoingMiniBlockHeader) GetOutGoingMBTypeInt32() int32 {
+// GetChainID returns the outgoing mb header chain iD
+func (omb *OutGoingMiniBlockHeader) GetChainID() int32 {
 	if omb == nil {
 		return 0
 	}
 
-	// TODO: Marius C: Here, this should only return the outgoing mb chain ID
+	// TODO: Marius C: MX-17260 Here, this should be replaced with the proper getter for chain ID enum
 	return 0
 }
 
-// SetOutGoingMBTypeInt32 sets the mini block type
-func (omb *OutGoingMiniBlockHeader) SetOutGoingMBTypeInt32(mbType int32) error {
+// SetChainID sets the mini block chain ID
+func (omb *OutGoingMiniBlockHeader) SetChainID(_ int32) error {
 	if omb == nil {
 		return data.ErrNilPointerReceiver
 	}
 
-	// TODO: Marius C: This should be a setter for chain ID
+	// TODO: Marius C: MX-17260 This should be replaced with the proper setter for chain ID enum
 	return nil
 }
 
