@@ -37,12 +37,12 @@ message SovereignChainHeader {
   EpochStartSovereign              EpochStart                = 8 [(gogoproto.jsontag) = "epochStart,omitempty", (gogoproto.nullable) = false];
 }
 
-enum OutGoingMBType {
-  OutGoingMbDeposit = 0;
-  OutGoingMbChangeValidatorSet = 30;
-  OutGoingMBRegisterToken = 60;
-  OutGoingMBRegisterBlsKey = 90;
-  OutGoingMBUnRegisterBlsKey = 120;
+enum OutGoingOpType {
+  OutGoingOpDeposit = 0;
+  OutGoingOpChangeValidatorSet = 30;
+  OutGoingOpRegisterToken = 60;
+  OutGoingOpRegisterBlsKey = 90;
+  OutGoingOpUnRegisterBlsKey = 120;
 };
 
 message OutGoingMiniBlockHeader {
