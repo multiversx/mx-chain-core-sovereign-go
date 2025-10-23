@@ -131,7 +131,7 @@ type SovereignChainHeaderHandler interface {
 	GetExtendedShardHeaderHashes() [][]byte
 	GetOutGoingMiniBlockHeaderHandlers() []OutGoingMiniBlockHeaderHandler
 	SetOutGoingMiniBlockHeaderHandlers(mbHeader []OutGoingMiniBlockHeaderHandler) error
-	GetOutGoingMiniBlockHeaderHandler(chainID int32) OutGoingMiniBlockHeaderHandler
+	GetOutGoingMiniBlockHeaderHandler(chainID dto.ChainID) OutGoingMiniBlockHeaderHandler
 	SetOutGoingMiniBlockHeaderHandler(mbHeader OutGoingMiniBlockHeaderHandler) error
 	GetDevFeesInEpoch() *big.Int
 	SetDevFeesInEpoch(value *big.Int) error
