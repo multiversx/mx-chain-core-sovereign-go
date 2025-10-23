@@ -67,12 +67,13 @@ func (x *BridgeOperations) GetData() []*BridgeOutGoingData {
 
 type BridgeOutGoingData struct {
 	state               protoimpl.MessageState `protogen:"open.v1"`
-	Hash                []byte                 `protobuf:"bytes,1,opt,name=Hash,proto3" json:"Hash,omitempty"`
-	OutGoingOperations  []*OutGoingOperation   `protobuf:"bytes,2,rep,name=OutGoingOperations,proto3" json:"OutGoingOperations,omitempty"`
-	AggregatedSignature []byte                 `protobuf:"bytes,3,opt,name=AggregatedSignature,proto3" json:"AggregatedSignature,omitempty"`
-	LeaderSignature     []byte                 `protobuf:"bytes,4,opt,name=LeaderSignature,proto3" json:"LeaderSignature,omitempty"`
-	PubKeysBitmap       []byte                 `protobuf:"bytes,5,opt,name=PubKeysBitmap,proto3" json:"PubKeysBitmap,omitempty"`
-	Epoch               uint32                 `protobuf:"varint,6,opt,name=Epoch,proto3" json:"Epoch,omitempty"`
+	ChainID             int32                  `protobuf:"varint,1,opt,name=ChainID,proto3" json:"ChainID,omitempty"`
+	Hash                []byte                 `protobuf:"bytes,2,opt,name=Hash,proto3" json:"Hash,omitempty"`
+	OutGoingOperations  []*OutGoingOperation   `protobuf:"bytes,3,rep,name=OutGoingOperations,proto3" json:"OutGoingOperations,omitempty"`
+	AggregatedSignature []byte                 `protobuf:"bytes,4,opt,name=AggregatedSignature,proto3" json:"AggregatedSignature,omitempty"`
+	LeaderSignature     []byte                 `protobuf:"bytes,5,opt,name=LeaderSignature,proto3" json:"LeaderSignature,omitempty"`
+	PubKeysBitmap       []byte                 `protobuf:"bytes,6,opt,name=PubKeysBitmap,proto3" json:"PubKeysBitmap,omitempty"`
+	Epoch               uint32                 `protobuf:"varint,7,opt,name=Epoch,proto3" json:"Epoch,omitempty"`
 	unknownFields       protoimpl.UnknownFields
 	sizeCache           protoimpl.SizeCache
 }
@@ -105,6 +106,13 @@ func (x *BridgeOutGoingData) ProtoReflect() protoreflect.Message {
 // Deprecated: Use BridgeOutGoingData.ProtoReflect.Descriptor instead.
 func (*BridgeOutGoingData) Descriptor() ([]byte, []int) {
 	return file_outGoingBridgeData_proto_rawDescGZIP(), []int{1}
+}
+
+func (x *BridgeOutGoingData) GetChainID() int32 {
+	if x != nil {
+		return x.ChainID
+	}
+	return 0
 }
 
 func (x *BridgeOutGoingData) GetHash() []byte {
@@ -311,14 +319,15 @@ const file_outGoingBridgeData_proto_rawDesc = "" +
 	"\n" +
 	"\x18outGoingBridgeData.proto\x12\tsovereign\"E\n" +
 	"\x10BridgeOperations\x121\n" +
-	"\x04Data\x18\x01 \x03(\v2\x1d.sovereign.BridgeOutGoingDataR\x04Data\"\x8e\x02\n" +
-	"\x12BridgeOutGoingData\x12\x12\n" +
-	"\x04Hash\x18\x01 \x01(\fR\x04Hash\x12L\n" +
-	"\x12OutGoingOperations\x18\x02 \x03(\v2\x1c.sovereign.OutGoingOperationR\x12OutGoingOperations\x120\n" +
-	"\x13AggregatedSignature\x18\x03 \x01(\fR\x13AggregatedSignature\x12(\n" +
-	"\x0fLeaderSignature\x18\x04 \x01(\fR\x0fLeaderSignature\x12$\n" +
-	"\rPubKeysBitmap\x18\x05 \x01(\fR\rPubKeysBitmap\x12\x14\n" +
-	"\x05Epoch\x18\x06 \x01(\rR\x05Epoch\"O\n" +
+	"\x04Data\x18\x01 \x03(\v2\x1d.sovereign.BridgeOutGoingDataR\x04Data\"\xa8\x02\n" +
+	"\x12BridgeOutGoingData\x12\x18\n" +
+	"\aChainID\x18\x01 \x01(\x05R\aChainID\x12\x12\n" +
+	"\x04Hash\x18\x02 \x01(\fR\x04Hash\x12L\n" +
+	"\x12OutGoingOperations\x18\x03 \x03(\v2\x1c.sovereign.OutGoingOperationR\x12OutGoingOperations\x120\n" +
+	"\x13AggregatedSignature\x18\x04 \x01(\fR\x13AggregatedSignature\x12(\n" +
+	"\x0fLeaderSignature\x18\x05 \x01(\fR\x0fLeaderSignature\x12$\n" +
+	"\rPubKeysBitmap\x18\x06 \x01(\fR\rPubKeysBitmap\x12\x14\n" +
+	"\x05Epoch\x18\a \x01(\rR\x05Epoch\"O\n" +
 	"\x11OutGoingOperation\x12\x12\n" +
 	"\x04Type\x18\x01 \x01(\x05R\x04Type\x12\x12\n" +
 	"\x04Hash\x18\x02 \x01(\fR\x04Hash\x12\x12\n" +
