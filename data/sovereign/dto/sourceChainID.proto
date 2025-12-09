@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+package proto;
+
+option go_package = "github.com/multiversx/mx-chain-core-go/data/sovereign/dto;dto";
+option (gogoproto.stable_marshaler_all) = true;
+
+import "github.com/gogo/protobuf/gogoproto/gogo.proto";
+
+enum ChainID {
+  UNSPECIFIED = 0;
+
+  MVX = 100;
+  ETH = 101;
+  SUI = 103;
+
+  ALL_CHAINS = 999;
+};
