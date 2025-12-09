@@ -13,10 +13,8 @@ import "github.com/multiversx/mx-chain-core-sovereign-go/data/sovereign/dto/sour
 
 // EpochStart holds the block information for end-of-epoch
 message EpochStartSovereign {
-  Economics                    Economics                       = 1 [(gogoproto.jsontag) = "economics", (gogoproto.nullable) = false];
-  EpochStartCrossChainData     LastFinalizedCrossChainHeader   = 2 [(gogoproto.jsontag) = "lastFinalizedCrossChainHeader", (gogoproto.nullable) = false];
-  // TODO: MX-17260- this should be a slice here for each chain
-  EpochStartOutGoingChainData  EpochStartOutGoingChainData     = 3 [(gogoproto.jsontag) = "epochStartOutGoingChainData", (gogoproto.nullable) = false];
+  Economics                Economics                     = 1 [(gogoproto.jsontag) = "economics", (gogoproto.nullable) = false];
+  EpochStartCrossChainData LastFinalizedCrossChainHeader = 2 [(gogoproto.jsontag) = "lastFinalizedCrossChainHeader", (gogoproto.nullable) = false];
 }
 
 // EpochStartShardData hold the last finalized headers hash and state root hash
@@ -26,12 +24,6 @@ message EpochStartCrossChainData {
   uint64                        Round                    = 7 [(gogoproto.jsontag) = "round"];
   uint64                        Nonce                    = 8 [(gogoproto.jsontag) = "nonce"];
   bytes                         HeaderHash               = 2 [(gogoproto.jsontag) = "headerHash,omitempty"];
-}
-
-// EpochStartOutGoingChainData holds epoch start outgoing chain data
-message EpochStartOutGoingChainData {
-  ChainID ChainID = 1;
-  uint64  Nonce = 2;
 }
 
 // SovereignChainHeader extends the Header structure with extra fields needed by sovereign chain
