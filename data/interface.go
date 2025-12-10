@@ -308,9 +308,10 @@ type EpochStartOutGoingChainDataHandler interface {
 	GetChainID() dto.ChainID
 	GetNonce() uint64
 }
+
 type SovereignEpochStartShardDataHandler interface {
 	EpochStartHandler
-	GetEpochStartOutGoingChainDataHandler() EpochStartOutGoingChainDataHandler
+	GetEpochStartOutGoingChainDataHandler() []EpochStartOutGoingChainDataHandler
 }
 
 // EconomicsHandler defines setters and getters for Economics
