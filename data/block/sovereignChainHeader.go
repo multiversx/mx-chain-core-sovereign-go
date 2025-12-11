@@ -971,7 +971,6 @@ func (m *EpochStartSovereign) GetEpochStartOutGoingChainDataHandlers() []data.Ep
 	}
 
 	ret := make([]data.EpochStartOutGoingChainDataHandler, len(m.EpochStartOutGoingChainData))
-
 	for idx, dta := range m.EpochStartOutGoingChainData {
 		ret[idx] = &dta
 	}

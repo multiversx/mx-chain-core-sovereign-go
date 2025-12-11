@@ -62,10 +62,9 @@ func (OutGoingOpType) EnumDescriptor() ([]byte, []int) {
 
 // EpochStart holds the block information for end-of-epoch
 type EpochStartSovereign struct {
-	Economics                     Economics                `protobuf:"bytes,1,opt,name=Economics,proto3" json:"economics"`
-	LastFinalizedCrossChainHeader EpochStartCrossChainData `protobuf:"bytes,2,opt,name=LastFinalizedCrossChainHeader,proto3" json:"lastFinalizedCrossChainHeader"`
-	// TODO: MX-17260- this should be a slice here for each chain
-	EpochStartOutGoingChainData []EpochStartOutGoingChainData `protobuf:"bytes,3,rep,name=EpochStartOutGoingChainData,proto3" json:"epochStartOutGoingChainData"`
+	Economics                     Economics                     `protobuf:"bytes,1,opt,name=Economics,proto3" json:"economics"`
+	LastFinalizedCrossChainHeader EpochStartCrossChainData      `protobuf:"bytes,2,opt,name=LastFinalizedCrossChainHeader,proto3" json:"lastFinalizedCrossChainHeader"`
+	EpochStartOutGoingChainData   []EpochStartOutGoingChainData `protobuf:"bytes,3,rep,name=EpochStartOutGoingChainData,proto3" json:"epochStartOutGoingChainData"`
 }
 
 func (m *EpochStartSovereign) Reset()      { *m = EpochStartSovereign{} }
