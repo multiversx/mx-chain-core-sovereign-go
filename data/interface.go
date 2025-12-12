@@ -310,7 +310,7 @@ type EpochStartOutGoingChainDataHandler interface {
 	GetNonce() uint64
 }
 
-// SovereignEpochStartShardDataHandler is a wrapper on top of EpochStartHandler with extra outgoing needed
+// SovereignEpochStartShardDataHandler is a wrapper on top of EpochStartHandler with sovereign necessary data
 type SovereignEpochStartShardDataHandler interface {
 	EpochStartHandler
 	GetEpochStartOutGoingChainDataHandlers() []EpochStartOutGoingChainDataHandler
