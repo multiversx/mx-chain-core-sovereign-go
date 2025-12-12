@@ -4,6 +4,7 @@ import (
 	"math/big"
 	"testing"
 
+	"github.com/multiversx/mx-chain-core-go/data/sovereign/dto"
 	"github.com/stretchr/testify/require"
 
 	"github.com/multiversx/mx-chain-core-go/core"
@@ -200,4 +201,25 @@ func TestSovereignChainHeader_SetOutGoingMiniBlockHeaderHandler(t *testing.T) {
 		[]data.OutGoingMiniBlockHeaderHandler{mbHeader2},
 		sovHdr.GetOutGoingMiniBlockHeaderHandlers(),
 	)
+}
+
+func TestSovereignChainHeader_GetEpochStartOutGoingChainDataHandlers(t *testing.T) {
+	t.Parallel()
+
+	sovHdr := &SovereignChainHeader{}
+	epochStart := sovHdr.GetEpochStart()
+	require.Empty(t, epochStart.GetEpochStartOutGoingChainDataHandlers())
+
+	expectedEpochStartOutGoingData := []EpochStartOutGoingChainData{
+		{
+			ChainID: dto.MVX,
+			Nonce:   4,
+		},
+	}
+	sovHdr.EpochStart = EpochStartSovereign{
+		EpochStartOutGoingChainData: expectedEpochStartOutGoingData,
+	}
+
+	epochStart = sovHdr.GetEpochStart()
+	require.Equal(t, expectedEpochStartOutGoingData, epochStart.EpochStartOutGoingChainData)
 }

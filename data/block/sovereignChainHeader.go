@@ -963,3 +963,17 @@ func (m *EpochStartSovereign) SetEconomics(economicsHandler data.EconomicsHandle
 
 	return nil
 }
+
+// GetEpochStartOutGoingChainDataHandlers returns epoch start outgoing chains data
+func (m *EpochStartSovereign) GetEpochStartOutGoingChainDataHandlers() []data.EpochStartOutGoingChainDataHandler {
+	if m == nil {
+		return nil
+	}
+
+	ret := make([]data.EpochStartOutGoingChainDataHandler, len(m.EpochStartOutGoingChainData))
+	for idx, dta := range m.EpochStartOutGoingChainData {
+		ret[idx] = &dta
+	}
+
+	return ret
+}

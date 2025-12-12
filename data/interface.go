@@ -304,6 +304,18 @@ type EpochStartShardDataHandler interface {
 	SetPendingMiniBlockHeaders([]MiniBlockHeaderHandler) error
 }
 
+// EpochStartOutGoingChainDataHandler holds epoch start data for outgoing operations
+type EpochStartOutGoingChainDataHandler interface {
+	GetChainID() dto.ChainID
+	GetNonce() uint64
+}
+
+// SovereignEpochStartShardDataHandler is a wrapper on top of EpochStartHandler with sovereign necessary data
+type SovereignEpochStartShardDataHandler interface {
+	EpochStartHandler
+	GetEpochStartOutGoingChainDataHandlers() []EpochStartOutGoingChainDataHandler
+}
+
 // EconomicsHandler defines setters and getters for Economics
 type EconomicsHandler interface {
 	GetTotalSupply() *big.Int
