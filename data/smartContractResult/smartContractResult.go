@@ -136,3 +136,13 @@ func (scr *SmartContractResult) SetGuardianSignature(_ []byte) {
 func (scr *SmartContractResult) HasOptionGuardianSet() bool {
 	return false
 }
+
+// HasOptionHashSignSet checks if hash signing is set for the smart contract result
+func (scr *SmartContractResult) HasOptionHashSignSet() bool {
+	return false
+}
+
+// GetDataForSigning returns the serialized smart contract result having an empty signature field
+func (scr *SmartContractResult) GetDataForSigning(_ data.Encoder, _ data.Marshaller, _ data.Hasher) ([]byte, error) {
+	return make([]byte, 0), nil
+}

@@ -399,8 +399,10 @@ type TransactionHandler interface {
 	SetGuardianSignature([]byte)
 	Size() int
 
+	GetDataForSigning(encoder Encoder, marshaller Marshaller, hasher Hasher) ([]byte, error)
 	CheckIntegrity() error
 	HasOptionGuardianSet() bool
+	HasOptionHashSignSet() bool
 }
 
 type TxWithExecutionOrderHandler interface {

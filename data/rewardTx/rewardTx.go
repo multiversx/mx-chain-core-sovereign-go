@@ -142,7 +142,17 @@ func (rtx *RewardTx) SetGuardianAddr(_ []byte) {
 func (rtx *RewardTx) SetGuardianSignature(_ []byte) {
 }
 
-// HasOptionGuardianSet checks if guardian is set for the receipt
+// HasOptionGuardianSet checks if guardian is set for the reward transaction
 func (rtx *RewardTx) HasOptionGuardianSet() bool {
 	return false
+}
+
+// HasOptionHashSignSet checks if hash sign is set for the reward transaction
+func (rtx *RewardTx) HasOptionHashSignSet() bool {
+	return false
+}
+
+// GetDataForSigning returns the serialized reward transaction having an empty signature field
+func (rtx *RewardTx) GetDataForSigning(_ data.Encoder, _ data.Marshaller, _ data.Hasher) ([]byte, error) {
+	return make([]byte, 0), nil
 }
