@@ -24,8 +24,8 @@ func NewTxVersionChecker(minTxVersion uint32) *txVersionChecker {
 }
 
 // IsSignedWithHash will return true if transaction is signed with hash
-func (tvc *txVersionChecker) IsSignedWithHash(tx *transaction.Transaction) bool {
-	if tx.Version > core.InitialVersionOfTransaction {
+func (tvc *txVersionChecker) IsSignedWithHash(tx data.TransactionHandler) bool {
+	if tx.GetVersion() > core.InitialVersionOfTransaction {
 		// transaction is signed with hash if LSB from last byte from options is set with 1
 		return tx.HasOptionHashSignSet()
 	}

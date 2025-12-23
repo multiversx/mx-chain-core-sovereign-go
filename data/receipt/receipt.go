@@ -132,3 +132,13 @@ func (rpt *Receipt) SetGuardianSignature(_ []byte) {
 func (rpt *Receipt) HasOptionGuardianSet() bool {
 	return false
 }
+
+// HasOptionHashSignSet checks if hash sign is set for the receipt
+func (rpt *Receipt) HasOptionHashSignSet() bool {
+	return false
+}
+
+// GetDataForSigning returns the serialized receipt having an empty signature field
+func (rpt *Receipt) GetDataForSigning(_ data.Encoder, _ data.Marshaller, _ data.Hasher) ([]byte, error) {
+	return make([]byte, 0), nil
+}
